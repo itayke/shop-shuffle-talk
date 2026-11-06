@@ -11,8 +11,9 @@
   section: 'Games that did a job', // groups the flow list; carries on to the next slides until another section
   title: 'VR Gastro',              // the gold banner (one line)
   text: 'Sold for $2M',            // the line under it, in the tagline's style; wraps
-  bullets: ['One', 'Two'],         // a list under the text
-  reveal: true,                    // bullets appear one per click
+  topBullets: ['One', 'Two'],      // a list under the text, above the media
+  sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
+  reveal: true,                    // bullets appear one per click, the top ones first
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
   layout: 'stack',                 // only to override the automatic choice: stack, side or flank
@@ -40,9 +41,13 @@ media: [
 
 ## Layouts
 
+Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, and the media stands on the sidewalk. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
+
+A slide without bullets picks one of these by itself, the one that gives the media the most room; `layout` names one instead (it applies only to slides without bullets):
+
 - **Stack**: words in the sky, media standing on the sidewalk below. The default.
-- **Side**: the title and text stay on top, and the bullets stand in a column left of the media. Chosen for every slide with bullets and media, unless the media would get too small (several cards with long bullets, like the Games slide, stay stacked). Without bullets it's chosen only when it makes the media clearly larger (a portrait clip), and all the words go in the column.
-- **Flank**: a side layout without bullets puts the title left of the media and the text right of it, if the title fits.
+- **Side**: the title and text in a column left of the media. Chosen when that makes the media clearly larger (a portrait clip).
+- **Flank**: a side layout that puts the title left of the media and the text right of it, if the title fits.
 - **No media**: the words are centered in the sky with a larger title (the "Grab your phone" slide).
 
 Text that doesn't fit drops to the next smaller type size.

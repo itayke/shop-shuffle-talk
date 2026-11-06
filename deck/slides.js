@@ -15,8 +15,18 @@ const DECK = {
     // ---- Who I am: two quick threads
     {
       section: 'Who I am',
-      title: 'Games',
-      bullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award', 'Cue Quest: in development'],
+      title: 'Original Games',
+      topBullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award'],
+      media: [
+        { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
+        { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
+      ],
+      notes: 'The craft thread. One beat each, the clip does the talking.',
+      secs: 45,
+    },
+    {
+      title: 'Work in progress',
+      topBullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award', 'Cue Quest: in development'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
         { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
@@ -28,7 +38,7 @@ const DECK = {
     {
       title: 'People, together',
       text: 'In real time, built fast',
-      bullets: ['ICQ: founding engineer, 100M+ users', 'Oberon: 30+ multiplayer games', 'Human Is', 'Claude Code: 15× throughput'],
+      topBullets: ['ICQ: founding engineer, 100M+ users', 'Oberon: 30+ multiplayer games', 'Human Is', 'Claude Code: 15× throughput'],
       reveal: true,
       notes: 'The tech thread, one bullet per click. AI is its latest chapter, not a beat of its own.',
       secs: 45,
@@ -39,7 +49,7 @@ const DECK = {
       section: 'Games that did a job',
       title: 'Gastro VR',
       text: 'Virtual Reality GI Experience',
-      bullets: [
+      sideBullets: [
         'Made for a healthcare conference booth',
         '2 weeks of solo work',
         'Acquired for $2M by a major pharma company'],

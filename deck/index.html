@@ -191,7 +191,7 @@ const REVEAL_SFX = 'step';
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
-const SLIDE_KEYS = ['section', 'title', 'text', 'bullets', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const SLIDE_KEYS = ['section', 'title', 'text', 'topBullets', 'sideBullets', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel'];
 const LAYOUTS = ['stack', 'side', 'flank'];
 
@@ -219,12 +219,20 @@ function readDeck() {
   let section = '';
   const list = deck.slides.map((raw, i) => {
     const s = { ...raw, n: i + 1, warnings: [] };
-    for (const k of Object.keys(raw)) if (!SLIDE_KEYS.includes(k)) s.warnings.push(`Unknown field "${k}"`);
+    for (const k of Object.keys(raw)) {
+      if (k === 'bullets') s.warnings.push('"bullets" is now "topBullets" (above the media) or "sideBullets" (beside it)');
+      else if (!SLIDE_KEYS.includes(k)) s.warnings.push(`Unknown field "${k}"`);
+    }
     if (s.layout && !LAYOUTS.includes(s.layout)) s.warnings.push(`Unknown layout "${s.layout}"`);
     if (s.color && !TITLE_COLORS[s.color]) s.warnings.push(`Unknown color "${s.color}"`);
     section = s.section || section;
     s.section = section;
-    s.bullets = s.bullets == null ? [] : [].concat(s.bullets);
+    const arr = (v) => (v == null ? [] : [].concat(v));
+    s.topBullets = arr(raw.topBullets);
+    s.sideBullets = arr(raw.sideBullets);
+    // Every bullet in reveal order: the top ones, then the side ones
+    s.bullets = [...s.topBullets, ...s.sideBullets];
+    if (s.layout && s.bullets.length) s.warnings.push('"layout" applies only to slides without bullets');
     s.media = (s.media == null ? [] : [].concat(s.media)).map((m) => {
       const item = typeof m === 'string' ? { src: m } : { ...m };
       for (const k of Object.keys(item)) if (!MEDIA_KEYS.includes(k)) s.warnings.push(`Unknown media field "${k}"`);
@@ -479,21 +487,28 @@ function fitRow(aspects, W, H) {
   return { h, widths, rowW, rowH: h + 2 * CARD_INSET };
 }
 
-// Text above the media, or beside it; each tries the type sizes in turn until the text fits
-function planStack(s, type, aspects) {
-  const block = textBlock(s, type, STAGE_W - 2 * MARGIN_X, 'center');
-  const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X, STREET_Y - MARGIN_TOP - (block.h ? block.h + BLOCK_GAP : 0));
-  return { mode: 'stack', block, row, ok: block.fits && row.h >= MEDIA_MIN_H };
+// Each plan tries the type sizes in turn until the text fits. Above the media go the heading (title and text) and the top
+// bullets; `bottom` is where the media's room starts
+function planTop(s, type) {
+  const head = textBlock({ ...s, bullets: [] }, type, STAGE_W - 2 * MARGIN_X, 'center');
+  const tops = textBlock({ bullets: s.topBullets, color: s.color }, type, STAGE_W - 2 * MARGIN_X, 'center');
+  const used = head.h + (head.h && tops.h ? BLOCK_GAP : 0) + tops.h;
+  return { head, tops, bottom: MARGIN_TOP + (used ? used + BLOCK_GAP : 0), fits: head.fits && tops.fits };
 }
+function planStack(s, type, aspects) {
+  const t = planTop(s, type);
+  const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X, STREET_Y - t.bottom);
+  return { mode: 'stack', ...t, row, ok: t.fits && row.h >= MEDIA_MIN_H };
+}
+// Side bullets stand in a column left of the media, under whatever sits above it
 function planSide(s, type, aspects) {
-  // With bullets, the title and text stay on top as in a stack, and only the bullets stand left of the media
-  if (s.bullets.length) {
-    const head = textBlock({ ...s, bullets: [] }, type, STAGE_W - 2 * MARGIN_X, 'center');
-    const block = textBlock({ bullets: s.bullets, color: s.color }, type, SIDE_TEXT_W, 'left');
-    const top = MARGIN_TOP + (head.h ? head.h + BLOCK_GAP : 0);
-    const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - block.w - BLOCK_GAP, STREET_Y - top);
-    return { mode: 'side', head, block, row, ok: head.fits && block.fits && block.h <= STREET_Y - top && row.h >= MEDIA_MIN_H };
-  }
+  const t = planTop(s, type);
+  const block = textBlock({ bullets: s.sideBullets, color: s.color }, type, SIDE_TEXT_W, 'left');
+  const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - block.w - BLOCK_GAP, STREET_Y - t.bottom);
+  return { mode: 'side', ...t, block, row, ok: t.fits && block.fits && block.h <= STREET_Y - t.bottom && row.h >= MEDIA_MIN_H };
+}
+// A slide without bullets may put its title and text in a column left of the media instead
+function planColumn(s, type, aspects) {
   const block = textBlock(s, type, SIDE_TEXT_W, 'left');
   const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - (block.w ? block.w + BLOCK_GAP : 0), STREET_Y - MARGIN_TOP);
   return { mode: 'side', block, row, ok: block.fits && block.h <= STREET_Y - MARGIN_TOP && row.h >= MEDIA_MIN_H };
@@ -504,9 +519,9 @@ function firstFit(make) {
   return p;
 }
 
-// Bullets stand beside the media whenever that fits; otherwise picks the layout that gives the media the most room (leaning to text
-// above), unless the slide names one. A side layout without bullets becomes a flank: the media centered, the title on its left and
-// the text on its right, if both fit
+// Bullets go where the slide puts them. A slide without bullets takes the layout that gives the media the most room (leaning to
+// text above) unless it names one, and a column there becomes a flank: the media centered, the title on its left and the text on
+// its right, if both fit
 function plan(s) {
   if (!s.media.length) {
     const p = firstFit((type) => {
@@ -516,10 +531,17 @@ function plan(s) {
     return p;
   }
   const aspects = s.media.map(aspectOf);
+  if (s.sideBullets.length) {
+    const p = firstFit((t) => planSide(s, t, aspects));
+    const tight = 'The side bullets leave the media too small: shorten them, or move some to topBullets';
+    if (!p.ok && !s.warnings.includes(tight)) s.warnings.push(tight);
+    return p;
+  }
+  if (s.topBullets.length) return firstFit((t) => planStack(s, t, aspects));
   const stack = s.layout === 'side' || s.layout === 'flank' ? null : firstFit((t) => planStack(s, t, aspects));
-  const side = s.layout === 'stack' ? null : firstFit((t) => planSide(s, t, aspects));
-  let p = !side ? stack : !stack ? side : (side.ok && (!stack.ok || s.bullets.length || side.row.h > stack.row.h * SIDE_BIAS)) ? side : stack;
-  if (p.mode === 'side' && s.layout !== 'side' && !s.bullets.length && s.title && s.text) {
+  const side = s.layout === 'stack' ? null : firstFit((t) => planColumn(s, t, aspects));
+  let p = !side ? stack : !stack ? side : (side.ok && (!stack.ok || side.row.h > stack.row.h * SIDE_BIAS)) ? side : stack;
+  if (p.mode === 'side' && s.layout !== 'side' && s.title && s.text) {
     const room = (STAGE_W - p.row.rowW) / 2 - 2 * FLANK_MARGIN;
     const title = titleArt(s.title, p.type.title, TITLE_COLORS[s.color] || C.bannerGold);
     if (title.w <= room) p = { ...p, mode: 'flank', title, text: pixelText(s.text, p.type.text, room, 'center') };
@@ -550,6 +572,18 @@ function mediaEl(item, w, h) {
   return img;
 }
 
+// The heading at a fixed top, and the top bullets centered between it and the media; returns where these words end
+function placeTop(p, rowTop, fades) {
+  let y = MARGIN_TOP;
+  if (p.head.h) { stage.append(place(p.head.el, (STAGE_W - p.head.w) / 2, y)); fades.push(p.head.el); y += p.head.h; }
+  if (p.tops.h) {
+    const ty = y + (rowTop - y - p.tops.h) / 2;
+    stage.append(place(p.tops.el, (STAGE_W - p.tops.w) / 2, ty)); fades.push(p.tops.el);
+    y = ty + p.tops.h;
+  }
+  return y;
+}
+
 // Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
 function build(s, p) {
   stage.replaceChildren(street, sky);
@@ -564,22 +598,18 @@ function build(s, p) {
   let x;
   if (p.mode === 'stack') {
     x = (STAGE_W - row.rowW) / 2;
-    if (p.block.h) { stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, Math.max(MARGIN_TOP / 2, (rowTop - p.block.h) / 2))); fades.push(p.block.el); }
-    rows = p.block.rows;
+    placeTop(p, rowTop, fades);
+    rows = p.tops.rows;
   } else if (p.mode === 'side') {
     const textW = p.block.w ? p.block.w + BLOCK_GAP : 0;
     const x0 = (STAGE_W - textW - row.rowW) / 2;
     x = x0 + textW;
-    // A heading on top is centered over the stage like a stack's, and the column beside the media stays below it
+    // The column beside the media stays below the words above it (a column without bullets has none)
     let lo = MARGIN_TOP;
-    if (p.head && p.head.h) {
-      const headY = Math.max(MARGIN_TOP / 2, (rowTop - p.head.h) / 2);
-      stage.append(place(p.head.el, (STAGE_W - p.head.w) / 2, headY)); fades.push(p.head.el);
-      lo = headY + p.head.h + BLOCK_GAP;
-    }
+    if (p.head) { const end = placeTop(p, rowTop, fades); if (end > MARGIN_TOP) lo = end + BLOCK_GAP; }
     const y = Math.max(lo, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + row.rowH * SIDE_RISE - p.block.h / 2));
     if (p.block.h) { stage.append(place(p.block.el, x0, y)); fades.push(p.block.el); }
-    rows = p.block.rows;
+    rows = [...(p.tops ? p.tops.rows : []), ...p.block.rows];
   } else {
     x = (STAGE_W - row.rowW) / 2;
     const mid = rowTop + row.rowH * SIDE_RISE;
