@@ -70,6 +70,7 @@ Trims wait for the talk's structure. YouTube downloads are the best stream avail
 - `Mushroom11_available_now_720.mp4`: the "Available Now!" trailer, from YouTube `KVe76XebJcw` (720p is the max there). The pick is 0:40.4–0:50.55: four gameplay shots (gear, sunset lake, boulder, pillar). Text in this trailer appears only on full-screen cards, never over gameplay.
 - `GastroVR_levelex_tech_demo_1080.mp4`: the Level Ex Tech Demo, from YouTube `fk3hOtUwgyA`. The VR part starts at 0:30; the deck's pick is 0:36.87–0:45.1 (into the polyp, the split screen, the controller close-up; it ends before the headset face). Its captions are burned in, so the cut keeps the full width and crops just above them. The clip-slide sketch keeps its earlier 0:39 cut.
 - `Venice_screen_recording_2026-11-06.mov`: a screen recording of Venice (working title), 2:25 at 2552×1428 and 60 fps, with a 2px black strip on the left and the mouse cursor showing. The pick is 1:10–1:20: a pan over the canal town, then a mission dialog with a character from about 1:17.
+- `spiropod-cool.jpg`: the Spiropod title image in its blue-teal variant, set aside because it blends into the deck's sky. The deck uses the warm cream variant, `deck/img/spiropod.jpg`.
 - `RopeRescue_youtube_480.mp4`: "Rope Rescue Preview" (2012), from YouTube `nYGSO293Yck`. 52 s, 640×480 at 25 fps (the max there). Animated captions are burned in throughout, and the end card shows a Google Play badge. The pick is 0:11.5–0:17.5: forest into cave, whose two captions read as one line ("only one bird / can grab a rope").
 
 ## Open

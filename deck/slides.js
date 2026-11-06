@@ -60,7 +60,7 @@ const DECK = {
     {
       title: 'Spiropod',
       text: 'For the patient',
-      media: [{ todo: 'Spiropod' }],
+      media: ['img/spiropod.jpg'],
       notes: 'Health, part two. Patented, and known to this audience.',
       secs: 30,
     },
