@@ -184,6 +184,8 @@ const DROP_LEAD = 2;
 // Several media items land one after another, this far apart, like shops joining
 const STAGGER_MS = 140;
 const TEXT_FADE_MS = 250;
+// Bullets come in one after another, each fading in as it settles from this many stage pixels higher
+const BULLET_IN_MS = 300, BULLET_STAGGER_MS = 120, BULLET_RISE = 10;
 const REVEAL_SFX = 'step';
 // How long to wait for a media file's size or the title font before going on without it
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
@@ -608,10 +610,20 @@ function rest(pt) {
   pt.fades.forEach((f) => (f.style.opacity = '1'));
 }
 
-// Each card falls from well above the stage and squashes on landing, one after another; the words wash in after the last
+// One bullet's entrance, after a delay; until it starts, the bullet stays hidden at its starting point
+function bulletIn(row, delay) {
+  row.animate(
+    [{ opacity: 0, transform: `translateY(${-BULLET_RISE}px)` }, { opacity: 1, transform: 'none' }],
+    { duration: BULLET_IN_MS, delay, easing: 'ease-out', fill: 'backwards' },
+  );
+}
+
+// Each card falls from well above the stage and squashes on landing, one after another; the words wash in after the last,
+// and the bullets follow one by one
 function play(pt) {
   const n = pt.cards.length;
   const lastLand = n ? DROP_MS + (n - 1) * STAGGER_MS : 0;
+  pt.rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
   const end = lastLand + Math.max(n ? SQUASH_MS : 0, TEXT_FADE_MS);
   const landed = new Set();
   pt.fades.forEach((f) => (f.style.opacity = '0'));
@@ -659,7 +671,11 @@ function show(i, { animate = false, shown = 0 } = {}) {
 
 function next() {
   if (!ready) return;
-  if (revealed < revealable(slides[cur])) { revealed++; applyReveal(); sfx(REVEAL_SFX); updateChrome(); return; }
+  if (revealed < revealable(slides[cur])) {
+    revealed++; applyReveal(); sfx(REVEAL_SFX); updateChrome();
+    if (!reduced.matches) bulletIn(parts.rows[revealed - 1], 0);
+    return;
+  }
   if (cur < slides.length - 1) show(cur + 1, { animate: true });
 }
 function back() {

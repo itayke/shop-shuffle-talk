@@ -37,9 +37,12 @@ const DECK = {
     // ---- Games that did a job, in themed pairs
     {
       section: 'Games that did a job',
-      title: 'VR Gastro',
-      text: 'Sold for $2M',
-      bullets: ['a','b','c'],
+      title: 'Gastro VR',
+      text: 'Virtual Reality GI Experience',
+      bullets: [
+        'Made for a healthcare conference booth',
+        '2 weeks of solo work',
+        'Acquired for $2M by a major pharma company'],
       media: ['clips/gastro-vr.mp4'],
       notes: 'Health, part one: it trains the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
       secs: 40,
