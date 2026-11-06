@@ -133,8 +133,8 @@ const SIDEWALK_H = 14, CURB_H = 2, SKY_BANDS = 5;
 const STREET_Y = STREET_TOP * ART;
 const ROAD_Y = (STREET_TOP + SIDEWALK_H + CURB_H) * ART;
 
-// Each media item's card, like the lobby's QR join card: a light panel, hairline border, rounded card and footage
-const CARD = { bg: 'rgba(247,249,251,0.92)', line: '#d0d7e0', pad: 16, border: 1, radius: 12, clipRadius: 12 };
+// Each media item's card, like the lobby's QR join card in dark mode: a dark panel, hairline border, rounded card and footage
+const CARD = { bg: 'rgba(22,29,39,0.92)', line: '#283241', pad: 16, border: 1, radius: 12, clipRadius: 12 };
 const CARD_INSET = CARD.pad + CARD.border;
 // Cards for media still to come, or a file that didn't load
 const PLACEHOLDER = { bg: '#1c1a26', label: '#f5c746', text: '#d0d7e0', font: 24, pad: 32 };
@@ -262,9 +262,13 @@ const mix = (a, b, t) => {
   const [x, y] = [p(a), p(b)];
   return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',')})`;
 };
+// Each cloud's starting x, its y and whether it's a big one, in art pixels
 const CLOUDS = [[38, 34, 1], [176, 18, 0], [300, 58, 1], [404, 26, 0]];
+const CLOUD_W = { big: 34, small: 24 };
+// Clouds drift right like the game's, in art pixels per second, each a little faster than the one before
+const CLOUD_SPEED = 2, CLOUD_SPEED_STEP = 0.15;
 function cloud(ctx, x, y, big) {
-  const w = big ? 34 : 24;
+  const w = big ? CLOUD_W.big : CLOUD_W.small;
   ctx.fillStyle = C.cloud;
   ctx.fillRect(x, y + 4, w, 5);
   ctx.fillRect(x + 4, y + 1, w * 0.45, 4);
@@ -289,7 +293,6 @@ function drawStreet() {
     ctx.fillStyle = mix(C.skyTop, C.skyLow, (b - 1) / (SKY_BANDS - 1));
     for (let x = 0; x < ART_W; x += 2) { ctx.fillRect(x, b * bandH, 1, 1); ctx.fillRect(x + 1, b * bandH + 1, 1, 1); }
   }
-  CLOUDS.forEach(([x, y, big]) => cloud(ctx, x, y, big));
   const r = rng(7);
   for (let x = -4; x < ART_W;) {
     const w = 18 + Math.floor(r() * 26), h = 26 + Math.floor(r() * 54);
@@ -311,6 +314,29 @@ function drawStreet() {
   return canvas;
 }
 const street = drawStreet();
+
+// The clouds' own layer over the street, kept across slides so they drift on through every change. They wrap around
+// the stage, move a whole art pixel at a time, and redraw only when one has moved; reduced motion holds them still
+const sky = document.createElement('canvas');
+sky.width = ART_W; sky.height = ART_H;
+sky.className = 'scene';
+const skyCtx = sky.getContext('2d');
+let cloudKey = '';
+function drawClouds(now) {
+  const t = reduced.matches ? 0 : now / 1000;
+  const xs = CLOUDS.map(([x0, , big], i) => {
+    const w = big ? CLOUD_W.big : CLOUD_W.small, span = ART_W + w;
+    return Math.floor((x0 + w + t * CLOUD_SPEED * (1 + i * CLOUD_SPEED_STEP)) % span) - w;
+  });
+  const key = xs.join();
+  if (key !== cloudKey) {
+    cloudKey = key;
+    skyCtx.clearRect(0, 0, ART_W, ART_H);
+    CLOUDS.forEach(([, y, big], i) => cloud(skyCtx, xs[i], y, big));
+  }
+  requestAnimationFrame(drawClouds);
+}
+requestAnimationFrame(drawClouds);
 
 // ---- Type ----------------------------------------------------------------------
 const el = (tag, css, text) => { const e = document.createElement(tag); if (css) e.style.cssText = css; if (text != null) e.textContent = text; return e; };
@@ -470,7 +496,7 @@ function mediaEl(item, w, h) {
 
 // Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
 function build(s, p) {
-  stage.replaceChildren(street);
+  stage.replaceChildren(street, sky);
   const cards = [], fades = [];
   let rows = [];
   if (p.mode === 'center') {
@@ -659,7 +685,7 @@ addEventListener('keydown', (e) => {
 const read = readDeck();
 slides = read.slides;
 deckWarnings = read.warnings;
-stage.replaceChildren(street);
+stage.replaceChildren(street, sky);
 fit();
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 Promise.all([
