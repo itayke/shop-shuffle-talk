@@ -14,7 +14,12 @@ clip() {
   echo "$6"
 }
 
+# ---- The clip-slide sketch
 # VR Gastro: the headset split screen, cropped above the burned-in captions
 clip GastroVR_levelex_tech_demo_1080.mp4 39 9.6 "crop=1600:900:320:0,scale=1280:720:flags=lanczos" 23 sketches/clip-slide/clips/gastro-vr.mp4
 # Cue Quest: a placeholder moment, past the opening caption
 clip CueQuestGameplayVertical2.mov 53.6 6.4 "scale=720:1280:flags=lanczos" 24 sketches/clip-slide/clips/cue-quest.mp4
+
+# ---- The deck
+clip GastroVR_levelex_tech_demo_1080.mp4 39 9.6 "crop=1600:900:320:0,scale=1280:720:flags=lanczos" 23 deck/clips/gastro-vr.mp4
+clip CueQuestGameplayVertical2.mov 53.6 6.4 "scale=720:1280:flags=lanczos" 24 deck/clips/cue-quest.mp4

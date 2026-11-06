@@ -8,14 +8,14 @@ A 10-minute talk by Itay Keren (Untame) that ends on Shop Shuffle, played live b
 - **The deck is a claude.ai artifact**, a standalone HTML page in the game's pixel style. It is not part of the game app, and not Google Slides (Slides only as a PDF export if an event asks for one).
 - **Mostly clips**: short, muted, looping MP4s of Itay's games behind one spoken line each. Roughly 8 to 12 slides. **At most one playable toy**, maybe none: the game is the playable moment.
 - **The handoff**: the last deck slide says "grab your phone", then switch to the game's tab. The game's **lobby is the last slide**: the Untame pitch is said over it while shops walk in, then Enter starts the round.
-- **The ending**: the game's own end card (a podium plus contact info on the screen and on each phone). The presenter just says thank you. That end card is being built in the game repo.
+- **The ending**: the game's own end card (a podium plus contact info on the screen and on each phone). The presenter just says thank you. The game, end card included, is built in the game repo.
 
 ## Folders
 
 - `raw/`: original footage and GIFs, any size. Never published.
 - `style/`: the game's look and sound for the deck (frames, shop designs, `shop-sfx.js`, `pixel-title.js`, `tokens.css`). The browsable version is https://claude.ai/artifact/GJc5gYWMxUKvatgNzZ3ucd, and `style/README.md` describes each file.
 - `sketches/`: one folder per slide sketch, each published as its own artifact. `clip-slide/` (https://claude.ai/artifact/YUZB3fZS5Nxmy4mVnBCQT9) is the chosen clip slide: the clip drops onto the street with the game's squash, in a card like the lobby's QR frame, under a gold title banner and a tagline-style line of text.
-- `deck/`: the deck page and its trimmed, compressed clips. This is also the **offline backup**: it must play from disk with no network.
+- `deck/`: the deck page and its trimmed, compressed clips. This is also the **offline backup**: it must play from disk with no network. The flow (each slide's title, text, bullets, media and notes) lives in `deck/slides.js` and the deck lays out each slide itself; `deck/README.md` lists the fields.
 - `clips.sh`: rebuilds every trimmed clip from `raw/`, one line per clip. It is the record of each cut.
 - **Git**: https://github.com/itayke/shop-shuffle-talk. Video stays out of it: `.gitignore` drops `raw/` and every video file anywhere, so trimmed clips come back by running `clips.sh` and are published with each artifact. Keep `deck/` complete on disk for show day anyway.
 - **Artifacts were first published from `~/Documents/shop-shuffle-talk`.** To update one from this folder, pass its URL (the links above); publishing without it makes a new artifact.
@@ -76,6 +76,7 @@ Trims wait for the talk's structure. YouTube downloads are the best stream avail
 - Which clips exist. Gather them into `raw/` first; what footage there is will shape the outline.
 - The beat-by-beat outline with timings, and which (if any) slide is playable.
 - What someone should do the next day (the audience is decided; see Draft structure).
+- Fonts for the offline copy: the deck loads its three faces from Google Fonts, so with no network the titles fall back to Arial Black. `deck/` needs local copies.
 
 ## Game repo
 

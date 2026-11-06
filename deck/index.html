@@ -1,0 +1,678 @@
+<title>Shop Shuffle Talk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* The page is chrome around one 16:9 stage: the stage is always the game's daytime street, the chrome follows the theme */
+:root {
+  --bg: #e7ebf0;
+  --panel: #f7f9fb;
+  --ink: #17202b;
+  --muted: #586374;
+  --line: #d0d7e0;
+  --accent: #e6a200;
+  --accent-ink: #17202b;
+  --chute: #2b78c6;
+  --danger: #d2462a;
+  --frame-bg: #17202b;
+  --font-title: 'Jersey 15', 'Arial Black', Impact, sans-serif;
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --font-body: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+    --accent: #f2b731; --chute: #5aa6f0; --danger: #f06a4e; --frame-bg: #06090d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+  --accent: #f2b731; --chute: #5aa6f0; --danger: #f06a4e; --frame-bg: #06090d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--font-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 24px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+
+header { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; }
+.eyebrow, .keys, .counter { font: 400 10px/1.6 var(--font-pixel); letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; margin: 0; }
+.keys { font-size: 8px; }
+
+/* The stage: a fixed 1920×1080 slide, scaled to fit its frame */
+.frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--frame-bg); border-radius: 4px; overflow: hidden; cursor: pointer; }
+.frame:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; border-radius: 0; background: #000; }
+.stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #7cc6ea; }
+.stage canvas { image-rendering: pixelated; display: block; }
+.scene { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+
+/* Controls under the stage */
+.bar { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+.btn { appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 500 14px/1 var(--font-body); padding: 10px 14px; border-radius: 6px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--chute); outline-offset: 2px; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+.spacer { flex: 1; }
+
+/* Notes and the outline */
+.cols { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; display: grid; gap: 10px; }
+.panel h2 { font: 400 30px/1 var(--font-title); margin: 0; }
+.notes-text { margin: 0; font-size: 18px; white-space: pre-wrap; }
+.muted { color: var(--muted); margin: 0; font-size: 14px; }
+.warn { margin: 0; padding-left: 18px; color: var(--danger); font-size: 14px; }
+.warn:empty { display: none; }
+.outline { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.outline .sec { display: flex; justify-content: space-between; font: 400 8px/1 var(--font-pixel); text-transform: uppercase; color: var(--muted); padding: 12px 8px 6px; }
+.outline .sec:first-child { padding-top: 0; }
+.outline button { appearance: none; width: 100%; display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: 8px; align-items: baseline; text-align: left; border: 0; border-radius: 4px; background: transparent; color: var(--ink); font: 400 15px/1.3 var(--font-body); padding: 6px 8px; cursor: pointer; }
+.outline button:hover { background: var(--bg); }
+.outline button[aria-current="true"] { background: var(--accent); color: var(--accent-ink); }
+.outline .n, .outline .t { font-variant-numeric: tabular-nums; opacity: 0.75; font-size: 13px; }
+.outline .total { display: flex; justify-content: space-between; border-top: 1px solid var(--line); margin-top: 8px; padding: 10px 8px 0; font-weight: 600; font-size: 14px; }
+@media (max-width: 860px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Shop Shuffle talk · deck</p>
+    <p class="keys">Right / PgDn next · Left / PgUp back · R replay · F full screen · B and . ignored</p>
+  </header>
+
+  <div class="frame" id="frame">
+    <div class="stage" id="stage" aria-label="Slide" aria-live="polite"></div>
+  </div>
+
+  <div class="bar">
+    <button type="button" class="btn" id="prev">← Back</button>
+    <button type="button" class="btn" id="next">Next →</button>
+    <span class="counter" id="counter"></span>
+    <span class="spacer"></span>
+    <label class="check"><input type="checkbox" id="sound" checked> Sound</label>
+    <button type="button" class="btn" id="full">Full screen</button>
+  </div>
+
+  <div class="cols">
+    <section class="panel" aria-label="Presenter notes">
+      <h2 id="notes-title">Notes</h2>
+      <p class="notes-text" id="notes"></p>
+      <p class="muted" id="up-next"></p>
+      <ul class="warn" id="warn"></ul>
+    </section>
+    <section class="panel" aria-label="Flow">
+      <h2>Flow</h2>
+      <ol class="outline" id="outline"></ol>
+    </section>
+  </div>
+</div>
+
+<script src="shop-sfx.js"></script>
+<script src="pixel-title.js"></script>
+<script src="slides.js"></script>
+<script>
+// ---- Constants -------------------------------------------------------------
+const STAGE_W = 1920, STAGE_H = 1080;
+// The street is drawn at quarter resolution and scaled up, so one art pixel is this many stage pixels
+const ART = 4;
+const ART_W = STAGE_W / ART, ART_H = STAGE_H / ART;
+const snap = (v) => Math.round(v / ART) * ART;
+
+// The street's fixed daylight palette and banner colors (from the game's renderer), plus the shades the deck derives
+const C = {
+  skyTop: '#7cc6ea', skyLow: '#d9eff7', skyline: '#b2d4e0', skylineWin: '#a5c9d8',
+  sidewalk: '#cdbd9f', sidewalkLit: '#dccfb5', seam: '#b8a88a', curb: '#857563',
+  asphalt: '#3c414f', grit: '#474c5b', ink: '#1c1a26',
+  bannerGold: '#f5c746', bannerGreen: '#52a65e', bannerBlue: '#4a86d8',
+  cloud: '#ffffff', cloudShade: '#dcedf5',
+};
+// A slide's `color` names one of the game's round-banner colors
+const TITLE_COLORS = { gold: C.bannerGold, green: C.bannerGreen, blue: C.bannerBlue };
+const TEXT_COLOR = '#2b3a55';
+
+// The sidewalk's top edge, in art pixels; media lands on it, and captions sit on the road below
+const STREET_TOP = 236;
+const SIDEWALK_H = 14, CURB_H = 2, SKY_BANDS = 5;
+const STREET_Y = STREET_TOP * ART;
+const ROAD_Y = (STREET_TOP + SIDEWALK_H + CURB_H) * ART;
+
+// Each media item's card, like the lobby's QR join card: a light panel, hairline border, rounded card and footage
+const CARD = { bg: 'rgba(247,249,251,0.92)', line: '#d0d7e0', pad: 16, border: 1, radius: 12, clipRadius: 12 };
+const CARD_INSET = CARD.pad + CARD.border;
+// Cards for media still to come, or a file that didn't load
+const PLACEHOLDER = { bg: '#1c1a26', label: '#f5c746', text: '#d0d7e0', font: 24, pad: 32 };
+const CAPTION = { color: '#dccfb5', font: 24 };
+
+// Layout, in stage pixels: margins, gaps, and the size limits for media
+const MARGIN_X = 96, MARGIN_TOP = 64;
+const BLOCK_GAP = 56, MEDIA_GAP = 40;
+const MEDIA_MAX_H = 784, MEDIA_MIN_H = 280;
+// The widest the text column grows beside media; flanking text keeps this far off the card and the stage edge
+const SIDE_TEXT_W = 640, FLANK_MARGIN = 48;
+// Text beside media centers this far down the cards
+const SIDE_RISE = 0.42;
+// Text goes beside the media only when that makes the media this much taller than with the text above it
+const SIDE_BIAS = 1.25;
+const DEFAULT_ASPECT = 16 / 9;
+
+// Type, in screen pixels per font pixel. When a slide's text doesn't fit, the next set is tried
+const TYPE_STEPS = [
+  { title: 4, hero: 6, text: 3, bullet: 2 },
+  { title: 3, hero: 5, text: 2, bullet: 2 },
+];
+// Spacing in font pixels of the element below the gap: title to text, before the bullets, between bullets
+const GAP_TEXT = 5, GAP_BULLETS = 10, GAP_BULLET = 5;
+// The bullet's square and its gap to the words, in bullet font pixels; it centers this far above the baseline, in ems
+const BULLET_MARK = 9, BULLET_INDENT = 7, BULLET_MID = 0.3;
+const LEADING = 1.1;
+const TITLE_FONT = "'Jersey 15', 'Arial Black', Impact, sans-serif";
+const TITLE_FONT_LOAD = "400 27px 'Jersey 15'";
+// How opaque smooth text must be to become a solid pixel (as in pixel-title.js)
+const INK_ALPHA = 128;
+
+// Motion, from the game's MOTION_LOOK: drop time, squash amount and time
+const DROP_MS = 600, SQUASH = 0.2, SQUASH_MS = 250;
+// Media starts this many times its on-screen fall above the stage, so it is out of sight while the video loads
+const DROP_LEAD = 2;
+// Several media items land one after another, this far apart, like shops joining
+const STAGGER_MS = 140;
+const TEXT_FADE_MS = 250;
+const REVEAL_SFX = 'step';
+// How long to wait for a media file's size or the title font before going on without it
+const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
+
+const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
+const SLIDE_KEYS = ['section', 'title', 'text', 'bullets', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel'];
+const LAYOUTS = ['stack', 'side', 'flank'];
+
+// ---- Elements and state ------------------------------------------------------
+const $ = (id) => document.getElementById(id);
+const stage = $('stage'), frame = $('frame'), soundBox = $('sound');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+let slides = [];
+let cur = 0, revealed = 0, parts = null, anim = 0, ready = false;
+
+const sfx = (id) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id); } catch (e) {} };
+const unlock = () => { try { window.ShopSfx && ShopSfx.unlock(); } catch (e) {} };
+addEventListener('pointerdown', unlock, { once: true });
+addEventListener('keydown', unlock, { once: true });
+
+// ---- Reading the flow ------------------------------------------------------
+// Fills in defaults and collects a warning for every field the deck doesn't know, so typos show up
+function readDeck() {
+  const warnings = [];
+  const deck = typeof DECK !== 'undefined' ? DECK : null;
+  if (!deck || !Array.isArray(deck.slides)) {
+    warnings.push('slides.js did not load or has no slides list. Check the browser console for a syntax error.');
+    return { slides: [], warnings };
+  }
+  let section = '';
+  const list = deck.slides.map((raw, i) => {
+    const s = { ...raw, n: i + 1, warnings: [] };
+    for (const k of Object.keys(raw)) if (!SLIDE_KEYS.includes(k)) s.warnings.push(`Unknown field "${k}"`);
+    if (s.layout && !LAYOUTS.includes(s.layout)) s.warnings.push(`Unknown layout "${s.layout}"`);
+    if (s.color && !TITLE_COLORS[s.color]) s.warnings.push(`Unknown color "${s.color}"`);
+    section = s.section || section;
+    s.section = section;
+    s.bullets = s.bullets == null ? [] : [].concat(s.bullets);
+    s.media = (s.media == null ? [] : [].concat(s.media)).map((m) => {
+      const item = typeof m === 'string' ? { src: m } : { ...m };
+      for (const k of Object.keys(item)) if (!MEDIA_KEYS.includes(k)) s.warnings.push(`Unknown media field "${k}"`);
+      item.kind = !item.src ? 'todo' : VIDEO_RE.test(item.src) ? 'video' : 'image';
+      return item;
+    });
+    return s;
+  });
+  return { slides: list, warnings };
+}
+
+// '9:16' or a number; anything else falls through to the file's own shape
+function parseAspect(a) {
+  if (typeof a === 'number' && a > 0) return a;
+  const m = typeof a === 'string' && a.match(/^\s*([\d.]+)\s*[:x/]\s*([\d.]+)\s*$/);
+  return m ? Number(m[1]) / Number(m[2]) : null;
+}
+
+// Learns each file's shape before its slide is laid out, and marks files that don't load
+function probe(item) {
+  if (item.kind === 'todo') return Promise.resolve();
+  return new Promise((resolve) => {
+    let timer = 0;
+    const done = (aspect, ok) => { clearTimeout(timer); item.natural = aspect; item.missing = !ok; resolve(); };
+    timer = setTimeout(() => done(null, true), PROBE_TIMEOUT_MS);
+    if (item.kind === 'video') {
+      const v = document.createElement('video');
+      v.preload = 'metadata'; v.muted = true;
+      v.onloadedmetadata = () => done(v.videoWidth / v.videoHeight, true);
+      v.onerror = () => done(null, false);
+      v.src = item.src;
+    } else {
+      const img = new Image();
+      img.onload = () => done(img.naturalWidth / img.naturalHeight, true);
+      img.onerror = () => done(null, false);
+      img.src = item.src;
+    }
+  });
+}
+const aspectOf = (item) => parseAspect(item.aspect) || item.natural || DEFAULT_ASPECT;
+
+// ---- Drawing the street ------------------------------------------------------
+// A small seeded random, so the skyline and the road's grit are the same on every draw
+const rng = (seed) => () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+const mix = (a, b, t) => {
+  const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [p(a), p(b)];
+  return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',')})`;
+};
+const CLOUDS = [[38, 34, 1], [176, 18, 0], [300, 58, 1], [404, 26, 0]];
+function cloud(ctx, x, y, big) {
+  const w = big ? 34 : 24;
+  ctx.fillStyle = C.cloud;
+  ctx.fillRect(x, y + 4, w, 5);
+  ctx.fillRect(x + 4, y + 1, w * 0.45, 4);
+  ctx.fillRect(x + w * 0.4, y - 1, w * 0.35, 6);
+  ctx.fillStyle = C.cloudShade;
+  ctx.fillRect(x, y + 9, w, 2);
+}
+
+// Paints the 1920×1080 street: banded, dithered sky, the hazy skyline, the sidewalk and the road
+function drawStreet() {
+  const canvas = document.createElement('canvas');
+  canvas.width = ART_W; canvas.height = ART_H;
+  canvas.className = 'scene';
+  const ctx = canvas.getContext('2d');
+  const top = STREET_TOP;
+  const bandH = Math.ceil(top / SKY_BANDS);
+  for (let b = 0; b < SKY_BANDS; b++) {
+    ctx.fillStyle = mix(C.skyTop, C.skyLow, b / (SKY_BANDS - 1));
+    ctx.fillRect(0, b * bandH, ART_W, bandH);
+    if (b === 0) continue;
+    // Two rows of checker dither soften each band edge, like the game's sky
+    ctx.fillStyle = mix(C.skyTop, C.skyLow, (b - 1) / (SKY_BANDS - 1));
+    for (let x = 0; x < ART_W; x += 2) { ctx.fillRect(x, b * bandH, 1, 1); ctx.fillRect(x + 1, b * bandH + 1, 1, 1); }
+  }
+  CLOUDS.forEach(([x, y, big]) => cloud(ctx, x, y, big));
+  const r = rng(7);
+  for (let x = -4; x < ART_W;) {
+    const w = 18 + Math.floor(r() * 26), h = 26 + Math.floor(r() * 54);
+    ctx.fillStyle = C.skyline;
+    ctx.fillRect(x, top - h, w - 2, h);
+    ctx.fillStyle = C.skylineWin;
+    for (let wy = top - h + 4; wy < top - 4; wy += 6) for (let wx = x + 3; wx < x + w - 5; wx += 5) ctx.fillRect(wx, wy, 2, 2);
+    x += w + Math.floor(r() * 10);
+  }
+  ctx.fillStyle = C.ink; ctx.fillRect(0, top - 1, ART_W, 1);
+  ctx.fillStyle = C.sidewalk; ctx.fillRect(0, top, ART_W, SIDEWALK_H);
+  ctx.fillStyle = C.sidewalkLit; ctx.fillRect(0, top, ART_W, 1);
+  ctx.fillStyle = C.seam; for (let x = 7; x < ART_W; x += 14) ctx.fillRect(x, top + 1, 1, SIDEWALK_H - 1);
+  ctx.fillStyle = C.curb; ctx.fillRect(0, top + SIDEWALK_H, ART_W, CURB_H);
+  const road = top + SIDEWALK_H + CURB_H;
+  ctx.fillStyle = C.asphalt; ctx.fillRect(0, road, ART_W, ART_H - road);
+  const g = rng(11); ctx.fillStyle = C.grit;
+  for (let i = 0; i < 260; i++) ctx.fillRect(Math.floor(g() * ART_W), road + 1 + Math.floor(g() * (ART_H - road - 1)), 1, 1);
+  return canvas;
+}
+const street = drawStreet();
+
+// ---- Type ----------------------------------------------------------------------
+const el = (tag, css, text) => { const e = document.createElement(tag); if (css) e.style.cssText = css; if (text != null) e.textContent = text; return e; };
+const place = (e, x, y) => { e.style.position = 'absolute'; e.style.left = `${Math.round(x)}px`; e.style.top = `${Math.round(y)}px`; return e; };
+
+// A title banner like the game's: hard-edged Jersey 15 with a round ink outline. Sizes are in stage pixels
+function titleArt(text, px, color) {
+  const c = document.createElement('canvas');
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', text);
+  PixelTitle.draw(c, text, { px, color, outline: C.ink });
+  return { el: c, w: parseFloat(c.style.width), h: parseFloat(c.style.height) };
+}
+
+// Greedy word wrap to a width; a newline in the text forces a break
+function wrap(ctx, text, maxW) {
+  const out = [];
+  for (const para of String(text).split('\n')) {
+    let line = '';
+    for (const word of para.split(' ')) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(next).width > maxW) { out.push(line); line = word; } else line = next;
+    }
+    out.push(line);
+  }
+  return out;
+}
+
+// Text in the lobby tagline's style: hard-edged Jersey 15 without an outline, wrapped to a width
+function pixelText(text, px, maxW, align) {
+  const c = document.createElement('canvas');
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', text);
+  const ratio = window.devicePixelRatio || 1;
+  const unit = px * ratio;
+  const size = Math.round(unit * PixelTitle.GRID);
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  const font = `400 ${size}px ${TITLE_FONT}`;
+  ctx.font = font;
+  const lines = wrap(ctx, text, maxW * ratio);
+  const m = ctx.measureText('Hg');
+  const ascent = Math.ceil(m.fontBoundingBoxAscent ?? size * 0.8), descent = Math.ceil(m.fontBoundingBoxDescent ?? size * 0.2);
+  // Line pitch and each line's start stay on whole font pixels, so every line is equally crisp
+  const pitch = Math.round((size * LEADING) / unit) * unit;
+  const widths = lines.map((l) => Math.ceil(ctx.measureText(l).width));
+  const w = Math.max(1, ...widths), h = ascent + descent + pitch * (lines.length - 1);
+  c.width = w; c.height = h;
+  c.style.width = `${w / ratio}px`; c.style.height = `${h / ratio}px`;
+  ctx.font = font; ctx.fillStyle = TEXT_COLOR;
+  lines.forEach((l, i) => ctx.fillText(l, align === 'left' ? 0 : Math.round((w - widths[i]) / 2 / unit) * unit, ascent + i * pitch));
+  const img = ctx.getImageData(0, 0, w, h);
+  for (let i = 3; i < img.data.length; i += 4) img.data[i] = img.data[i] >= INK_ALPHA ? 255 : 0;
+  ctx.putImageData(img, 0, 0);
+  return { el: c, w: w / ratio, h: h / ratio, ascent: ascent / ratio, size: size / ratio };
+}
+
+// The slide's words as one column: title, text, then bullets. Reports its size and whether everything fit the width
+function textBlock(s, type, maxW, align, hero) {
+  const box = el('div', `display:flex; flex-direction:column; align-items:${align === 'left' ? 'flex-start' : 'center'};`);
+  const color = TITLE_COLORS[s.color] || C.bannerGold;
+  let w = 0, h = 0, fits = true;
+  const add = (node, nw, nh, gap) => {
+    if (h) { node.style.marginTop = `${gap}px`; h += gap; }
+    box.append(node); w = Math.max(w, nw); h += nh;
+    if (nw > maxW) fits = false;
+  };
+  if (s.title) { const t = titleArt(s.title, hero ? type.hero : type.title, color); add(t.el, t.w, t.h, 0); }
+  if (s.text) { const t = pixelText(s.text, type.text, maxW, align); add(t.el, t.w, t.h, GAP_TEXT * type.text); }
+  const rows = [];
+  if (s.bullets.length) {
+    const px = type.bullet;
+    const mark = BULLET_MARK * px, indent = BULLET_INDENT * px;
+    const list = el('div', `display:flex; flex-direction:column; align-items:flex-start; gap:${GAP_BULLET * px}px;`);
+    let lw = 0, lh = 0;
+    s.bullets.forEach((b, i) => {
+      const t = pixelText(b, px, maxW - mark - indent, 'left');
+      const dot = el('div', `flex:none; width:${mark}px; height:${mark}px; background:${color}; border:${px}px solid ${C.ink}; margin-top:${Math.round(t.ascent - BULLET_MID * t.size - mark / 2)}px;`);
+      const row = el('div', `display:flex; align-items:flex-start; gap:${indent}px;`);
+      row.append(dot, t.el);
+      list.append(row); rows.push(row);
+      lw = Math.max(lw, mark + indent + t.w); lh += t.h + (i ? GAP_BULLET * px : 0);
+    });
+    add(list, lw, lh, GAP_BULLETS * px);
+  }
+  return { el: box, w, h, fits, rows };
+}
+
+// ---- Layout ------------------------------------------------------------------
+// Sizes a row of cards to share one height, as large as the box allows
+function fitRow(aspects, W, H) {
+  const n = aspects.length, sum = aspects.reduce((a, b) => a + b, 0);
+  const h = Math.floor(Math.min(H - 2 * CARD_INSET, MEDIA_MAX_H, (W - MEDIA_GAP * (n - 1) - n * 2 * CARD_INSET) / sum));
+  const widths = aspects.map((a) => Math.round(h * a));
+  const rowW = widths.reduce((a, b) => a + b, 0) + n * 2 * CARD_INSET + MEDIA_GAP * (n - 1);
+  return { h, widths, rowW, rowH: h + 2 * CARD_INSET };
+}
+
+// Text above the media, or beside it; each tries the type sizes in turn until the text fits
+function planStack(s, type, aspects) {
+  const block = textBlock(s, type, STAGE_W - 2 * MARGIN_X, 'center');
+  const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X, STREET_Y - MARGIN_TOP - (block.h ? block.h + BLOCK_GAP : 0));
+  return { mode: 'stack', block, row, ok: block.fits && row.h >= MEDIA_MIN_H };
+}
+function planSide(s, type, aspects) {
+  const block = textBlock(s, type, SIDE_TEXT_W, 'left');
+  const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - (block.w ? block.w + BLOCK_GAP : 0), STREET_Y - MARGIN_TOP);
+  return { mode: 'side', block, row, ok: block.fits && block.h <= STREET_Y - MARGIN_TOP && row.h >= MEDIA_MIN_H };
+}
+function firstFit(make) {
+  let p;
+  for (const type of TYPE_STEPS) { p = make(type); p.type = type; if (p.ok) break; }
+  return p;
+}
+
+// Picks the layout that gives the media the most room (leaning to text above), unless the slide names one. A side layout without bullets
+// becomes a flank: the media centered, the title on its left and the text on its right, if both fit
+function plan(s) {
+  if (!s.media.length) {
+    const p = firstFit((type) => {
+      const block = textBlock(s, type, STAGE_W - 2 * MARGIN_X, 'center', true);
+      return { mode: 'center', block, ok: block.fits && block.h <= STREET_Y - 2 * MARGIN_TOP };
+    });
+    return p;
+  }
+  const aspects = s.media.map(aspectOf);
+  const stack = s.layout === 'side' || s.layout === 'flank' ? null : firstFit((t) => planStack(s, t, aspects));
+  const side = s.layout === 'stack' ? null : firstFit((t) => planSide(s, t, aspects));
+  let p = !side ? stack : !stack ? side : (side.ok && (!stack.ok || side.row.h > stack.row.h * SIDE_BIAS)) ? side : stack;
+  if (p.mode === 'side' && s.layout !== 'side' && !s.bullets.length && s.title && s.text) {
+    const room = (STAGE_W - p.row.rowW) / 2 - 2 * FLANK_MARGIN;
+    const title = titleArt(s.title, p.type.title, TITLE_COLORS[s.color] || C.bannerGold);
+    if (title.w <= room) p = { ...p, mode: 'flank', title, text: pixelText(s.text, p.type.text, room, 'center') };
+  }
+  return p;
+}
+
+// ---- Building a slide ----------------------------------------------------------
+function video(src, css) {
+  const v = el('video', css);
+  Object.assign(v, { src, muted: true, loop: true, autoplay: true, playsInline: true });
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+  v.play().catch(() => {});
+  return v;
+}
+function placeholder(item, css) {
+  const box = el('div', `${css} background:${PLACEHOLDER.bg}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:${PLACEHOLDER.font}px; padding:${PLACEHOLDER.pad}px; text-align:center; font:400 ${PLACEHOLDER.font}px/1.6 var(--font-pixel); color:${PLACEHOLDER.text};`);
+  box.append(el('div', `color:${PLACEHOLDER.label};`, item.missing ? 'MISSING FILE' : 'CLIP TO COME'));
+  box.append(el('div', '', item.missing ? item.src : item.todo || ''));
+  return box;
+}
+function mediaEl(item, w, h) {
+  const css = `display:block; width:${w}px; height:${h}px; object-fit:cover; border-radius:${CARD.clipRadius}px;`;
+  if (item.kind === 'todo' || item.missing) return placeholder(item, css);
+  if (item.kind === 'video') return video(item.src, css);
+  const img = el('img', `${css}${item.pixel ? ' image-rendering:pixelated;' : ''}`);
+  img.src = item.src; img.alt = item.caption || '';
+  return img;
+}
+
+// Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
+function build(s, p) {
+  stage.replaceChildren(street);
+  const cards = [], fades = [];
+  let rows = [];
+  if (p.mode === 'center') {
+    stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
+    return { cards, fades: [p.block.el], rows: p.block.rows };
+  }
+  const { row } = p;
+  const rowTop = STREET_Y - row.rowH;
+  let x;
+  if (p.mode === 'stack') {
+    x = (STAGE_W - row.rowW) / 2;
+    if (p.block.h) { stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, Math.max(MARGIN_TOP / 2, (rowTop - p.block.h) / 2))); fades.push(p.block.el); }
+    rows = p.block.rows;
+  } else if (p.mode === 'side') {
+    const textW = p.block.w ? p.block.w + BLOCK_GAP : 0;
+    const x0 = (STAGE_W - textW - row.rowW) / 2;
+    x = x0 + textW;
+    const y = Math.max(MARGIN_TOP, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + row.rowH * SIDE_RISE - p.block.h / 2));
+    if (p.block.h) { stage.append(place(p.block.el, x0, y)); fades.push(p.block.el); }
+    rows = p.block.rows;
+  } else {
+    x = (STAGE_W - row.rowW) / 2;
+    const mid = rowTop + row.rowH * SIDE_RISE;
+    const side = x / 2;
+    stage.append(place(p.title.el, side - p.title.w / 2, mid - p.title.h / 2), place(p.text.el, STAGE_W - side - p.text.w / 2, mid - p.text.h / 2));
+    fades.push(p.title.el, p.text.el);
+  }
+  s.media.forEach((item, i) => {
+    const w = row.widths[i];
+    const boxW = w + 2 * CARD_INSET;
+    const card = el('div', `position:absolute; left:${Math.round(x)}px; top:${rowTop}px; width:${boxW}px; height:${row.rowH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD.radius}px; transform-origin:50% 100%;`);
+    card.append(mediaEl(item, w, row.h));
+    stage.append(card);
+    cards.push({ el: card, top: rowTop, h: row.rowH });
+    if (item.caption) {
+      const cap = el('div', `position:absolute; left:${Math.round(x)}px; width:${boxW}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center; justify-content:center; text-align:center; font:400 ${CAPTION.font}px/1 var(--font-pixel); color:${CAPTION.color}; text-transform:uppercase; white-space:nowrap;`, item.caption);
+      stage.append(cap); fades.push(cap);
+    }
+    x += boxW + MEDIA_GAP;
+  });
+  return { cards, fades, rows };
+}
+
+// ---- Motion ------------------------------------------------------------------
+const squashScale = (q) => `scale(${1 + q / 2}, ${1 - q})`;
+function rest(pt) {
+  pt.cards.forEach((c) => (c.el.style.transform = ''));
+  pt.fades.forEach((f) => (f.style.opacity = '1'));
+}
+
+// Each card falls from well above the stage and squashes on landing, one after another; the words wash in after the last
+function play(pt) {
+  const n = pt.cards.length;
+  const lastLand = n ? DROP_MS + (n - 1) * STAGGER_MS : 0;
+  const end = lastLand + Math.max(n ? SQUASH_MS : 0, TEXT_FADE_MS);
+  const landed = new Set();
+  pt.fades.forEach((f) => (f.style.opacity = '0'));
+  if (n) sfx('drop');
+  const start = performance.now();
+  const tick = (now) => {
+    const T = now - start;
+    pt.cards.forEach((c, i) => {
+      const t = T - i * STAGGER_MS;
+      const from = -(c.top + c.h) * DROP_LEAD;
+      if (t < DROP_MS) { const u = Math.max(0, t) / DROP_MS; c.el.style.transform = `translateY(${snap(from * (1 - u * u))}px)`; }
+      else if (t < DROP_MS + SQUASH_MS) {
+        if (!landed.has(i)) { landed.add(i); sfx('land'); }
+        c.el.style.transform = squashScale((1 - (t - DROP_MS) / SQUASH_MS) * SQUASH);
+      } else c.el.style.transform = '';
+    });
+    const fade = String(Math.max(0, Math.min(1, (T - lastLand) / TEXT_FADE_MS)));
+    pt.fades.forEach((f) => (f.style.opacity = fade));
+    if (T < end) anim = requestAnimationFrame(tick); else rest(pt);
+  };
+  anim = requestAnimationFrame(tick);
+}
+
+// ---- Showing and stepping ----------------------------------------------------
+const revealable = (s) => (s.reveal ? s.bullets.length : 0);
+function applyReveal() {
+  const s = slides[cur];
+  parts.rows.forEach((r, i) => (r.style.visibility = !s.reveal || i < revealed ? 'visible' : 'hidden'));
+}
+
+// Shows slide i; `shown` is how many reveal bullets start visible
+function show(i, { animate = false, shown = 0 } = {}) {
+  if (!slides.length) return;
+  cancelAnimationFrame(anim);
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  revealed = Math.min(shown, revealable(slides[cur]));
+  parts = build(slides[cur], plan(slides[cur]));
+  rest(parts);
+  applyReveal();
+  if (animate && !reduced.matches) play(parts);
+  // The slide number in the URL, so a reload comes back to it; some embeds refuse this
+  try { history.replaceState(null, '', `#${cur + 1}`); } catch (e) {}
+  updateChrome();
+}
+
+function next() {
+  if (!ready) return;
+  if (revealed < revealable(slides[cur])) { revealed++; applyReveal(); sfx(REVEAL_SFX); updateChrome(); return; }
+  if (cur < slides.length - 1) show(cur + 1, { animate: true });
+}
+function back() {
+  if (ready && cur > 0) show(cur - 1, { shown: Infinity });
+}
+
+// ---- Chrome: counter, notes, flow ----------------------------------------------
+const clock = (secs) => `${Math.floor(secs / 60)}:${String(Math.round(secs % 60)).padStart(2, '0')}`;
+const label = (s) => s.title || s.text || '(untitled)';
+let deckWarnings = [];
+
+function buildOutline() {
+  const ol = $('outline');
+  ol.replaceChildren();
+  let section = null, total = 0;
+  const sums = {};
+  slides.forEach((s) => (sums[s.section] = (sums[s.section] || 0) + (s.secs || 0)));
+  slides.forEach((s, i) => {
+    if (s.section !== section) {
+      section = s.section;
+      const head = el('li', ''); head.className = 'sec';
+      head.append(el('span', '', section || 'Slides'), el('span', '', sums[section] ? clock(sums[section]) : ''));
+      ol.append(head);
+    }
+    total += s.secs || 0;
+    const media = s.media.length ? ` · ${s.media.length} media` : '';
+    const btn = el('button', '');
+    btn.type = 'button';
+    btn.append(el('span', '', String(i + 1)), el('span', '', `${label(s)}${media}`), el('span', '', s.secs ? clock(s.secs) : ''));
+    btn.children[0].className = 'n'; btn.children[2].className = 't';
+    btn.addEventListener('click', () => show(i, { animate: true }));
+    const li = el('li', ''); li.append(btn); ol.append(li);
+  });
+  const foot = el('li', ''); foot.className = 'total';
+  foot.append(el('span', '', 'Talk'), el('span', '', clock(total)));
+  ol.append(foot);
+}
+
+function updateChrome() {
+  const s = slides[cur];
+  const steps = revealable(s);
+  $('counter').textContent = `${cur + 1} / ${slides.length}${steps ? ` · bullet ${revealed} / ${steps}` : ''}`;
+  $('notes-title').textContent = `${cur + 1}. ${label(s)}`;
+  $('notes').textContent = s.notes || '';
+  const nx = slides[cur + 1];
+  $('up-next').textContent = nx ? `Next: ${label(nx)}` : 'Last slide: switch to the game tab.';
+  const warn = [...deckWarnings, ...s.warnings, ...s.media.filter((m) => m.missing).map((m) => `Missing file: ${m.src}`)];
+  $('warn').replaceChildren(...warn.map((w) => el('li', '', w)));
+  document.querySelectorAll('#outline button').forEach((b, i) => b.setAttribute('aria-current', String(i === cur)));
+}
+
+// ---- Fit and controls --------------------------------------------------------
+function fit() {
+  const r = frame.getBoundingClientRect();
+  const s = Math.min(r.width / STAGE_W, r.height / STAGE_H);
+  stage.style.transform = `translate(${(r.width - STAGE_W * s) / 2}px, ${(r.height - STAGE_H * s) / 2}px) scale(${s})`;
+}
+new ResizeObserver(fit).observe(frame);
+
+const toggleFull = () => {
+  if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  else frame.requestFullscreen?.().catch(() => {});
+};
+$('prev').addEventListener('click', back);
+$('next').addEventListener('click', next);
+$('full').addEventListener('click', toggleFull);
+frame.addEventListener('click', next);
+
+addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input, button') && (e.key === ' ' || e.key === 'Enter')) return;
+  // Clickers send B and . to black the screen; the deck ignores both
+  if (e.key === 'b' || e.key === 'B' || e.key === '.') { e.preventDefault(); return; }
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'PageDown') { e.preventDefault(); next(); }
+  else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); back(); }
+  else if (k === 'Home') show(0, { animate: true });
+  else if (k === 'End') show(slides.length - 1, { shown: Infinity });
+  else if (k === 'r' || k === 'R') show(cur, { animate: true });
+  else if (k === 'f' || k === 'F') toggleFull();
+});
+
+// ---- Start -----------------------------------------------------------------------
+// Waits for the title font and every file's shape (each with a time limit), then opens on the slide in the URL
+const read = readDeck();
+slides = read.slides;
+deckWarnings = read.warnings;
+stage.replaceChildren(street);
+fit();
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+Promise.all([
+  Promise.race([document.fonts.load(TITLE_FONT_LOAD), wait(FONT_WAIT_MS)]),
+  ...slides.flatMap((s) => s.media.map(probe)),
+]).then(() => {
+  ready = true;
+  buildOutline();
+  const fromHash = parseInt(location.hash.slice(1), 10);
+  if (slides.length) show(Number.isFinite(fromHash) ? fromHash - 1 : 0, { shown: Number.isFinite(fromHash) ? Infinity : 0 });
+  else updateWarningsOnly();
+  // Text is measured from the font, so lay out again if it arrives after the wait
+  document.fonts.load(TITLE_FONT_LOAD).then(() => slides.length && show(cur, { shown: revealed }));
+});
+function updateWarningsOnly() { $('warn').replaceChildren(...deckWarnings.map((w) => el('li', '', w))); }
+</script>
