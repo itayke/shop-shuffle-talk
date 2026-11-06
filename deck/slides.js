@@ -14,8 +14,10 @@ const DECK = {
 
     // ---- Who I am: two quick threads
     {
+      section: 'Who I am',
       title: 'ICQ',
-      text: 'Founding engineer of the first instant messenger, 100M+ users',
+      text: 'World\'s first Instant Messenger',
+      sideBullets: ['Founding engineer, lead server engineer'],
       media: ['img/icq.png'],
       notes: 'The tech thread: people together, in real time.',
       secs: 25,
@@ -28,7 +30,6 @@ const DECK = {
       secs: 20,
     },
     {
-      section: 'Who I am',
       title: 'Original Games',
       topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Apple Design Award 2017, $1M+ revenue'],
       media: [
