@@ -18,7 +18,8 @@ const DECK = {
       title: 'Games',
       bullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award', 'Cue Quest: in development'],
       media: [
-        { todo: 'Mushroom 11 trailer: the moment is still to pick' },
+        { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
+        { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
       ],
       notes: 'The craft thread. One beat each, the clip does the talking.',

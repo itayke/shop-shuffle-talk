@@ -66,9 +66,10 @@ Cut, or kept for questions afterwards: Project Venice, Espressopost, the LLM his
 
 Trims wait for the talk's structure. YouTube downloads are the best stream available; no originals exist unless noted.
 
-- `CueQuestGameplayVertical2.mov`: portrait 1080×1920, HEVC. Its place in the talk is still open.
-- `Mushroom11_available_now_720.mp4`: the "Available Now!" trailer, from YouTube `KVe76XebJcw` (720p is the max there). The moment is still to pick.
-- `GastroVR_levelex_tech_demo_1080.mp4`: the Level Ex Tech Demo, from YouTube `fk3hOtUwgyA`. The VR part starts at 0:30; the headset split screen (about 0:39–0:50) is the pick. It has burned-in captions, so crop above them.
+- `CueQuestGameplayVertical2.mov`: portrait 1080×1920, HEVC. The deck's pick is 0:24.15–0:34.35: three tables, ending before the "Incredible Challenges" caption. The clip-slide sketch keeps its earlier placeholder cut.
+- `Mushroom11_available_now_720.mp4`: the "Available Now!" trailer, from YouTube `KVe76XebJcw` (720p is the max there). The pick is 0:40.4–0:50.55: four gameplay shots (gear, sunset lake, boulder, pillar). Text in this trailer appears only on full-screen cards, never over gameplay.
+- `GastroVR_levelex_tech_demo_1080.mp4`: the Level Ex Tech Demo, from YouTube `fk3hOtUwgyA`. The VR part starts at 0:30; the deck's pick is 0:36.87–0:45.1 (into the polyp, the split screen, the controller close-up; it ends before the headset face). Its captions are burned in, so the cut keeps the full width and crops just above them. The clip-slide sketch keeps its earlier 0:39 cut.
+- `RopeRescue_youtube_480.mp4`: "Rope Rescue Preview" (2012), from YouTube `nYGSO293Yck`. 52 s, 640×480 at 25 fps (the max there). Animated captions are burned in throughout, and the end card shows a Google Play badge. The pick is 0:11.5–0:17.5: forest into cave, whose two captions read as one line ("only one bird / can grab a rope").
 
 ## Open
 
