@@ -15,13 +15,17 @@ const DECK = {
     // ---- Who I am: two quick threads
     {
       section: 'Who I am',
-      title: 'ICQ',
+      title: 'ICQ + AOL',
       text: 'World\'s first Instant Messenger',
-      sideBullets: ['Founding engineer, lead server engineer'],
+      sideBullets: [
+        'Founding member, ICQ# 30,000',
+        'Lead server engineer, 100M+ users',
+        'Acquired and integrated into AOL',
+      ],
       sideWidth: 'wide',
       media: ['img/icq.png'],
       notes: 'The tech thread: people together, in real time.',
-      secs: 25,
+      secs: 30,
     },
     {
       title: 'Oberon Media',

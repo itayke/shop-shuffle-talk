@@ -184,8 +184,11 @@ const FONT_LOADS = ["400 27px 'Jersey 15'", `${BULLET_FONT.weight} 36px 'Work Sa
 // How opaque smooth text must be to become a solid pixel (as in pixel-title.js)
 const INK_ALPHA = 128;
 
-// Motion, from the game's MOTION_LOOK: drop time, squash amount and time
-const DROP_MS = 600, SQUASH = 0.2, SQUASH_MS = 250;
+// Motion, from the game's MOTION_LOOK: drop time, squash amount and time. The squash is softer than the game's, since a
+// card is far larger on screen than a shop
+const DROP_MS = 600, SQUASH = 0.1, SQUASH_MS = 200;
+// The squash builds over this share of its time, then relaxes over the rest, instead of snapping on impact
+const SQUASH_IN = 0.1;
 // Media starts this many times its on-screen fall above the stage, so it is out of sight while the video loads
 const DROP_LEAD = 2;
 // Several media items land one after another, this far apart, like shops joining
@@ -724,7 +727,8 @@ function play(pt) {
       if (t < DROP_MS) { const u = Math.max(0, t) / DROP_MS; c.el.style.transform = `translateY(${snap(from * (1 - u * u))}px)`; }
       else if (t < DROP_MS + SQUASH_MS) {
         if (!landed.has(i)) { landed.add(i); sfx('land'); }
-        c.el.style.transform = squashScale((1 - (t - DROP_MS) / SQUASH_MS) * SQUASH);
+        const u = (t - DROP_MS) / SQUASH_MS;
+        c.el.style.transform = squashScale((u < SQUASH_IN ? u / SQUASH_IN : (1 - u) / (1 - SQUASH_IN)) * SQUASH);
       } else c.el.style.transform = '';
     });
     const fade = String(Math.max(0, Math.min(1, (T - lastLand) / TEXT_FADE_MS)));
