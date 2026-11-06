@@ -199,12 +199,20 @@ const BULLET_IN_MS = 300, BULLET_STAGGER_MS = 120, BULLET_RISE = 10;
 // A card's caption comes in as the card lands, fading in as it rises from this many stage pixels lower
 const CAPTION_IN_MS = 300, CAPTION_SINK = 10;
 const REVEAL_SFX = 'step';
+// Stamps (award laurels) slam onto a card's top-right corner once it settles, or one per click on a reveal slide. Each is a
+// share of the card's width, capped, with an inset from the media's edges; it starts this many times larger and tilted,
+// overshoots below full size at the impact point (a share of its time), then settles
+const STAMP_SHARE = 0.15, STAMP_MAX_W = 150, STAMP_INSET = 20, STAMP_GAP = 16;
+const STAMP_MS = 260, STAMP_FROM = 2.5, STAMP_TILT = -10, STAMP_HIT = 0.6, STAMP_UNDER = 0.92;
+const STAMP_DELAY_MS = 250, STAMP_STAGGER_MS = 200;
+const STAMP_SHADOW = 'drop-shadow(0 2px 8px rgba(0,0,0,0.75))';
+const STAMP_SFX = 'shutDown';
 // How long to wait for a media file's size or the title font before going on without it
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
 const SLIDE_KEYS = ['section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
-const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel'];
+const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel', 'stamps'];
 const LAYOUTS = ['stack', 'side', 'flank'];
 
 // ---- Elements and state ------------------------------------------------------
@@ -212,7 +220,7 @@ const $ = (id) => document.getElementById(id);
 const stage = $('stage'), frame = $('frame'), soundBox = $('sound');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let slides = [];
-let cur = 0, revealed = 0, parts = null, anim = 0, ready = false;
+let cur = 0, revealed = 0, parts = null, anim = 0, ready = false, timers = [];
 
 const sfx = (id) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id); } catch (e) {} };
 const unlock = () => { try { window.ShopSfx && ShopSfx.unlock(); } catch (e) {} };
@@ -264,8 +272,10 @@ function readDeck() {
       const item = typeof m === 'string' ? { src: m } : { ...m };
       for (const k of Object.keys(item)) if (!MEDIA_KEYS.includes(k)) s.warnings.push(`Unknown media field "${k}"`);
       item.kind = !item.src ? 'todo' : VIDEO_RE.test(item.src) ? 'video' : 'image';
+      item.stamps = [].concat(item.stamps ?? []);
       return item;
     });
+    s.stampCount = s.media.reduce((n, m) => n + m.stamps.length, 0);
     return s;
   });
   return { slides: list, warnings };
@@ -644,11 +654,11 @@ function placeTop(p, rowTop, fades) {
 // Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
 function build(s, p) {
   stage.replaceChildren(street, sky);
-  const cards = [], fades = [], caps = [];
+  const cards = [], fades = [], caps = [], stamps = [];
   let rows = [];
   if (p.mode === 'center') {
     stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
-    return { cards, fades: [p.block.el], rows: p.block.rows, caps };
+    return { cards, fades: [p.block.el], rows: p.block.rows, caps, stamps };
   }
   const { row } = p;
   const rowTop = STREET_Y - row.rowH;
@@ -679,6 +689,7 @@ function build(s, p) {
     const boxW = w + 2 * CARD_INSET;
     const card = el('div', `position:absolute; left:${Math.round(x)}px; top:${rowTop}px; width:${boxW}px; height:${row.rowH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD_RADIUS}px; transform-origin:50% 100%;`);
     card.append(mediaEl(item, w, row.h));
+    if (item.stamps.length) stamps.push(...stampRow(card, item.stamps, w, cards.length));
     stage.append(card);
     cards.push({ el: card, top: rowTop, h: row.rowH });
     if (item.caption) {
@@ -687,7 +698,24 @@ function build(s, p) {
     }
     x += boxW + MEDIA_GAP;
   });
-  return { cards, fades, rows, caps };
+  return { cards, fades, rows, caps, stamps };
+}
+
+// A card's stamps in a row in the top-right corner of its media, shrinking to fit when the card is narrow. Inside the
+// card, so they squash with it
+function stampRow(card, srcs, mediaW, cardIndex) {
+  const n = srcs.length;
+  const fit = (mediaW - 2 * STAMP_INSET - STAMP_GAP * (n - 1)) / n;
+  const w = Math.floor(Math.min(STAMP_MAX_W, mediaW * STAMP_SHARE, fit));
+  const row = el('div', `position:absolute; left:${CARD.pad + STAMP_INSET}px; right:${CARD.pad + STAMP_INSET}px; top:${CARD.pad + STAMP_INSET}px; display:flex; align-items:flex-start; justify-content:flex-end; gap:${STAMP_GAP}px; pointer-events:none;`);
+  const out = srcs.map((src) => {
+    const img = el('img', `display:block; width:${w}px; height:auto; filter:${STAMP_SHADOW};`);
+    img.src = src; img.alt = '';
+    row.append(img);
+    return { el: img, card: cardIndex };
+  });
+  card.append(row);
+  return out;
 }
 
 // ---- Motion ------------------------------------------------------------------
@@ -706,6 +734,19 @@ function settleIn(node, delay, dy, ms) {
   );
 }
 const bulletIn = (row, delay) => settleIn(row, delay, -BULLET_RISE, BULLET_IN_MS);
+// A stamp slams down from large and tilted, overshooting a little before it settles, with a thud on impact
+function stampIn(stamp, delay) {
+  timers.push(setTimeout(() => sfx(STAMP_SFX), delay + STAMP_MS * STAMP_HIT));
+  if (reduced.matches) return;
+  stamp.el.animate(
+    [
+      { opacity: 0, transform: `scale(${STAMP_FROM}) rotate(${STAMP_TILT}deg)`, easing: 'ease-in' },
+      { opacity: 1, transform: `scale(${STAMP_UNDER})`, offset: STAMP_HIT, easing: 'ease-out' },
+      { opacity: 1, transform: 'none' },
+    ],
+    { duration: STAMP_MS, delay, fill: 'backwards' },
+  );
+}
 
 // Each card falls from well above the stage and squashes on landing, one after another, its caption rising in as it lands;
 // the words wash in after the last, and the bullets follow one by one
@@ -714,6 +755,8 @@ function play(pt) {
   const lastLand = n ? DROP_MS + (n - 1) * STAGGER_MS : 0;
   pt.caps.forEach((c) => settleIn(c.el, DROP_MS + c.i * STAGGER_MS, CAPTION_SINK, CAPTION_IN_MS));
   pt.rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
+  // Stamps wait for every card to settle; on a reveal slide they come by click instead
+  if (!slides[cur].reveal) pt.stamps.forEach((st, i) => stampIn(st, lastLand + SQUASH_MS + STAMP_DELAY_MS + i * STAMP_STAGGER_MS));
   const end = lastLand + Math.max(n ? SQUASH_MS : 0, TEXT_FADE_MS);
   const landed = new Set();
   pt.fades.forEach((f) => (f.style.opacity = '0'));
@@ -739,16 +782,19 @@ function play(pt) {
 }
 
 // ---- Showing and stepping ----------------------------------------------------
-const revealable = (s) => (s.reveal ? s.bullets.length : 0);
+// A reveal slide's steps: its bullets, then its stamps
+const revealable = (s) => (s.reveal ? s.bullets.length + s.stampCount : 0);
 function applyReveal() {
-  const s = slides[cur];
-  parts.rows.forEach((r, i) => (r.style.visibility = !s.reveal || i < revealed ? 'visible' : 'hidden'));
+  const s = slides[cur], seen = (i) => (!s.reveal || i < revealed ? 'visible' : 'hidden');
+  parts.rows.forEach((r, i) => (r.style.visibility = seen(i)));
+  parts.stamps.forEach((st, i) => (st.el.style.visibility = seen(parts.rows.length + i)));
 }
 
-// Shows slide i; `shown` is how many reveal bullets start visible
+// Shows slide i; `shown` is how many reveal steps start visible
 function show(i, { animate = false, shown = 0 } = {}) {
   if (!slides.length) return;
   cancelAnimationFrame(anim);
+  timers.forEach(clearTimeout); timers = [];
   cur = Math.max(0, Math.min(slides.length - 1, i));
   revealed = Math.min(shown, revealable(slides[cur]));
   parts = build(slides[cur], plan(slides[cur]));
@@ -763,8 +809,10 @@ function show(i, { animate = false, shown = 0 } = {}) {
 function next() {
   if (!ready) return;
   if (revealed < revealable(slides[cur])) {
-    revealed++; applyReveal(); sfx(REVEAL_SFX); updateChrome();
-    if (!reduced.matches) bulletIn(parts.rows[revealed - 1], 0);
+    const k = revealed++;
+    applyReveal(); updateChrome();
+    if (k < parts.rows.length) { sfx(REVEAL_SFX); if (!reduced.matches) bulletIn(parts.rows[k], 0); }
+    else stampIn(parts.stamps[k - parts.rows.length], 0);
     return;
   }
   if (cur < slides.length - 1) show(cur + 1, { animate: true });
@@ -808,7 +856,7 @@ function buildOutline() {
 function updateChrome() {
   const s = slides[cur];
   const steps = revealable(s);
-  $('counter').textContent = `${cur + 1} / ${slides.length}${steps ? ` · bullet ${revealed} / ${steps}` : ''}`;
+  $('counter').textContent = `${cur + 1} / ${slides.length}${steps ? ` · step ${revealed} / ${steps}` : ''}`;
   $('notes-title').textContent = `${cur + 1}. ${label(s)}`;
   $('notes').textContent = s.notes || '';
   const nx = slides[cur + 1];

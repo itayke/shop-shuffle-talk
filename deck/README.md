@@ -15,7 +15,7 @@
   sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
                                    // in either list, **double asterisks** make words bold
   sideWidth: 'wide',               // how wide the side column may grow: narrow, normal (default), wide, or a share like 0.45
-  reveal: true,                    // bullets appear one per click, the top ones first
+  reveal: true,                    // bullets appear one per click, the top ones first, then any stamps
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
   layout: 'stack',                 // only to override the automatic choice: stack, side or flank
@@ -36,8 +36,11 @@ media: [
   { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },   // caption: a label on the road under the card
   { src: 'img/street-lobby.png', pixel: true },           // pixel: keep pixel art hard-edged when scaled
   { todo: 'Spiropod in use', aspect: '9:16' },             // a placeholder card until the clip exists
+  { src: 'clips/mushroom-11.mp4', stamps: ['img/award-apple-design-2017.png'] },  // stamps: images slammed onto the card
 ]
 ```
+
+`stamps` are images (award laurels, say) that slam onto the top-right corner of a card's media once every card has landed, one after another with a thud. Several stand in a row, shrinking to fit a narrow card. On a `reveal` slide they come one per click instead, after the bullets.
 
 `aspect` (`'16:9'`, `'9:16'` or a number) sets a card's shape. A file's own shape is used when it has none; a `todo` defaults to 16:9. A file that doesn't load shows as a MISSING FILE card. Videos play muted and looping. Cut them with `../clips.sh` into `clips/`.
 

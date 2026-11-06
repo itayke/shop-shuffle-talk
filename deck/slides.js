@@ -31,12 +31,12 @@ const DECK = {
       title: 'Oberon Media',
       text: 'Casual Games Service and Studio',
       sideBullets: [
+        'Multiplayer white-label service',
+        'Ran a games studio of a dozen devs & artists',
         '30+ multiplayer casual games',
-        'Groundbreaking multiplayer system',
-        'Acquired and integrated into AOL',
       ],
       sideWidth: 'wide',
-      media: ['img/oberon-pool.png'],
+      media: [{ src: 'img/oberon-pool.png', caption: '8-Ball Pool' }],
       secs: 20,
     },
     {
@@ -44,7 +44,10 @@ const DECK = {
       topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Apple Design Award 2017, $1M+ revenue'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
-        { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
+        {
+          src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11',
+          stamps: ['img/award-apple-design-2017.png', 'img/award-google-play-2017.png'],
+        },
       ],
       notes: 'The craft thread. One beat each, the clip does the talking.',
       secs: 45,
