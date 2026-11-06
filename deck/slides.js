@@ -14,6 +14,20 @@ const DECK = {
 
     // ---- Who I am: two quick threads
     {
+      title: 'ICQ',
+      text: 'Founding engineer of the first instant messenger, 100M+ users',
+      media: ['img/icq.png'],
+      notes: 'The tech thread: people together, in real time.',
+      secs: 25,
+    },
+    {
+      title: 'Oberon Media',
+      text: '30+ multiplayer casual games, millions of monthly players',
+      media: ['img/oberon-pool.png'],
+      notes: 'The tech thread, continued. Human Is and Claude Code (15× throughput) are said here, or folded in later; AI is its latest chapter, not a beat of its own.',
+      secs: 20,
+    },
+    {
       section: 'Who I am',
       title: 'Original Games',
       topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Apple Design Award 2017, $1M+ revenue'],
@@ -34,20 +48,6 @@ const DECK = {
       ],
       notes: 'The craft thread. One beat each, the clip does the talking.',
       secs: 45,
-    },
-    {
-      title: 'ICQ',
-      text: 'Founding engineer of the first instant messenger, 100M+ users',
-      media: ['img/icq.png'],
-      notes: 'The tech thread: people together, in real time.',
-      secs: 25,
-    },
-    {
-      title: 'Oberon Media',
-      text: '30+ multiplayer casual games, millions of monthly players',
-      media: ['img/oberon-pool.png'],
-      notes: 'The tech thread, continued. Human Is and Claude Code (15× throughput) are said here, or folded in later; AI is its latest chapter, not a beat of its own.',
-      secs: 20,
     },
 
     // ---- Games that did a job, in themed pairs

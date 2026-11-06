@@ -1,5 +1,7 @@
 <title>Shop Shuffle Talk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<!-- The game's shop icon, its gold front turned banner green to tell the deck's tab from the game's -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* The page is chrome around one 16:9 stage: the stage is always the game's daytime street, the chrome follows the theme */
@@ -168,7 +170,8 @@ const HEART = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...']
 const HEART_CELL = 1.5, BULLET_INDENT = 7;
 // The heart sits this many art pixels below the words' middle, where it reads as level with them
 const HEART_DROP = 1;
-const LEADING = 1.1;
+// Wrapped tagline lines step this many ems apart; Jersey 15's em is tall, so under 1 still leaves room
+const LEADING = 0.8;
 const TITLE_FONT = "'Jersey 15', 'Arial Black', Impact, sans-serif";
 // Bullets carry more words than the pixel faces read well at, so they use the game's sans, smooth. Its size is in bullet
 // units, its line pitch in ems, and a bullet's square centers this far above the baseline, in ems
