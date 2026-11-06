@@ -16,7 +16,7 @@ const DECK = {
     {
       section: 'Who I am',
       title: 'Original Games',
-      topBullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award'],
+      topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Apple Design Award 2017, $1M+ revenue'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
         { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
@@ -26,11 +26,11 @@ const DECK = {
     },
     {
       title: 'Work in progress',
-      topBullets: ['Rope Rescue: Top 10 on the App Store', 'Mushroom 11: Apple Design Award', 'Cue Quest: in development'],
+      topBullets: ['**Cue Quest** mini-golf + billiard love child',
+        '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
       media: [
-        { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
-        { src: 'clips/mushroom-11.mp4', caption: 'Mushroom 11' },
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
+        { src: 'clips/mushroom-11.mp4', caption: 'Venice' },
       ],
       notes: 'The craft thread. One beat each, the clip does the talking.',
       secs: 45,

@@ -1,6 +1,6 @@
 <title>Shop Shuffle Talk</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* The page is chrome around one 16:9 stage: the stage is always the game's daytime street, the chrome follows the theme */
 :root {
@@ -172,8 +172,9 @@ const LEADING = 1.1;
 const TITLE_FONT = "'Jersey 15', 'Arial Black', Impact, sans-serif";
 // Bullets carry more words than the pixel faces read well at, so they use the game's sans, smooth. Its size is in bullet
 // units, its line pitch in ems, and a bullet's square centers this far above the baseline, in ems
-const BULLET_FONT = { family: "'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif", weight: 500, em: 18, leading: 1.25, mid: 0.35 };
-const FONT_LOADS = ["400 27px 'Jersey 15'", `${BULLET_FONT.weight} 36px 'Work Sans'`];
+// Words wrapped in **double asterisks** take the bold weight
+const BULLET_FONT = { family: "'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif", weight: 500, bold: 700, em: 18, leading: 1.25, mid: 0.35 };
+const FONT_LOADS = ["400 27px 'Jersey 15'", `${BULLET_FONT.weight} 36px 'Work Sans'`, `${BULLET_FONT.bold} 36px 'Work Sans'`];
 // How opaque smooth text must be to become a solid pixel (as in pixel-title.js)
 const INK_ALPHA = 128;
 
@@ -186,6 +187,8 @@ const STAGGER_MS = 140;
 const TEXT_FADE_MS = 250;
 // Bullets come in one after another, each fading in as it settles from this many stage pixels higher
 const BULLET_IN_MS = 300, BULLET_STAGGER_MS = 120, BULLET_RISE = 10;
+// A card's caption comes in as the card lands, fading in as it rises from this many stage pixels lower
+const CAPTION_IN_MS = 300, CAPTION_SINK = 10;
 const REVEAL_SFX = 'step';
 // How long to wait for a media file's size or the title font before going on without it
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
@@ -434,13 +437,43 @@ const measure = document.createElement('canvas').getContext('2d');
 function sansText(text, px, maxW) {
   const size = px * BULLET_FONT.em;
   const font = `${BULLET_FONT.weight} ${size}px ${BULLET_FONT.family}`;
+  const boldFont = `${BULLET_FONT.bold} ${size}px ${BULLET_FONT.family}`;
+  const width = (tok) => { measure.font = tok.b ? boldFont : font; return measure.measureText(tok.w).width; };
+  // Words and the spaces between them; pieces that touch (bold ending mid-word) stay together as one word
+  const units = [];
+  for (const part of String(text).split(/(\*\*.+?\*\*)/)) {
+    const b = /^\*\*.+\*\*$/.test(part);
+    for (const w of (b ? part.slice(2, -2) : part).split(/(\s+)/)) {
+      if (!w) continue;
+      const space = /^\s+$/.test(w), last = units[units.length - 1];
+      if (!space && last && !last.space) last.toks.push({ w, b });
+      else units.push({ space, toks: [{ w, b }] });
+    }
+  }
+  units.forEach((u) => (u.w = u.toks.reduce((sum, t) => sum + width(t), 0)));
+  // Greedy wrap by measured width; a newline forces a break, and spaces never start or end a line
+  const lines = [[]];
+  let lineW = 0;
+  const trim = (l) => { while (l.length && l[l.length - 1].space) l.pop(); };
+  for (const u of units) {
+    const line = lines[lines.length - 1];
+    if (u.space && u.toks[0].w.includes('\n')) { trim(line); lines.push([]); lineW = 0; continue; }
+    if (u.space && !line.length) continue;
+    if (!u.space && line.length && lineW + u.w > maxW) { trim(line); lines.push([u]); lineW = u.w; continue; }
+    line.push(u); lineW += u.w;
+  }
+  lines.forEach(trim);
+  const lineWidth = (l) => l.reduce((sum, u) => sum + u.w, 0);
   measure.font = font;
-  const lines = wrap(measure, text, maxW);
   const lineH = Math.round(size * BULLET_FONT.leading);
   const m = measure.measureText('Hg');
   const a = m.fontBoundingBoxAscent ?? size * 0.8, d = m.fontBoundingBoxDescent ?? size * 0.2;
-  const w = Math.ceil(Math.max(1, ...lines.map((l) => measure.measureText(l).width)));
-  const e = el('div', `font:${font}; line-height:${lineH}px; color:${TEXT_COLOR}; white-space:pre; width:${w}px;`, lines.join('\n'));
+  const w = Math.ceil(Math.max(1, ...lines.map(lineWidth)));
+  const e = el('div', `font:${font}; line-height:${lineH}px; color:${TEXT_COLOR}; white-space:pre; width:${w}px;`);
+  lines.forEach((l, i) => {
+    if (i) e.append('\n');
+    for (const u of l) for (const t of u.toks) e.append(t.b ? el('span', `font-weight:${BULLET_FONT.bold};`, t.w) : t.w);
+  });
   return { el: e, w, h: lineH * lines.length, ascent: (lineH - a - d) / 2 + a, size };
 }
 
@@ -587,11 +620,11 @@ function placeTop(p, rowTop, fades) {
 // Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
 function build(s, p) {
   stage.replaceChildren(street, sky);
-  const cards = [], fades = [];
+  const cards = [], fades = [], caps = [];
   let rows = [];
   if (p.mode === 'center') {
     stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
-    return { cards, fades: [p.block.el], rows: p.block.rows };
+    return { cards, fades: [p.block.el], rows: p.block.rows, caps };
   }
   const { row } = p;
   const rowTop = STREET_Y - row.rowH;
@@ -626,11 +659,11 @@ function build(s, p) {
     cards.push({ el: card, top: rowTop, h: row.rowH });
     if (item.caption) {
       const cap = el('div', `position:absolute; left:${Math.round(x)}px; width:${boxW}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center; justify-content:center; text-align:center; font:400 ${CAPTION.font}px/1 var(--font-pixel); color:${CAPTION.color}; text-transform:uppercase; white-space:nowrap;`, item.caption);
-      stage.append(cap); fades.push(cap);
+      stage.append(cap); caps.push({ el: cap, i: cards.length - 1 });
     }
     x += boxW + MEDIA_GAP;
   });
-  return { cards, fades, rows };
+  return { cards, fades, rows, caps };
 }
 
 // ---- Motion ------------------------------------------------------------------
@@ -640,19 +673,22 @@ function rest(pt) {
   pt.fades.forEach((f) => (f.style.opacity = '1'));
 }
 
-// One bullet's entrance, after a delay; until it starts, the bullet stays hidden at its starting point
-function bulletIn(row, delay) {
-  row.animate(
-    [{ opacity: 0, transform: `translateY(${-BULLET_RISE}px)` }, { opacity: 1, transform: 'none' }],
-    { duration: BULLET_IN_MS, delay, easing: 'ease-out', fill: 'backwards' },
+// An element's entrance: it fades in as it settles from dy stage pixels away (negative is above), after a delay; until it
+// starts, it stays hidden at its starting point
+function settleIn(node, delay, dy, ms) {
+  node.animate(
+    [{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: 'none' }],
+    { duration: ms, delay, easing: 'ease-out', fill: 'backwards' },
   );
 }
+const bulletIn = (row, delay) => settleIn(row, delay, -BULLET_RISE, BULLET_IN_MS);
 
-// Each card falls from well above the stage and squashes on landing, one after another; the words wash in after the last,
-// and the bullets follow one by one
+// Each card falls from well above the stage and squashes on landing, one after another, its caption rising in as it lands;
+// the words wash in after the last, and the bullets follow one by one
 function play(pt) {
   const n = pt.cards.length;
   const lastLand = n ? DROP_MS + (n - 1) * STAGGER_MS : 0;
+  pt.caps.forEach((c) => settleIn(c.el, DROP_MS + c.i * STAGGER_MS, CAPTION_SINK, CAPTION_IN_MS));
   pt.rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
   const end = lastLand + Math.max(n ? SQUASH_MS : 0, TEXT_FADE_MS);
   const landed = new Set();

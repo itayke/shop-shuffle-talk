@@ -13,6 +13,7 @@
   text: 'Sold for $2M',            // the line under it, in the tagline's style; wraps
   topBullets: ['One', 'Two'],      // a list under the text, above the media
   sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
+                                   // in either list, **double asterisks** make words bold
   reveal: true,                    // bullets appear one per click, the top ones first
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
