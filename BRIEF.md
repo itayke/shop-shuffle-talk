@@ -74,6 +74,7 @@ Trims wait for the talk's structure. YouTube downloads are the best stream avail
 - `LastChinatown_dragon_gate_screenshot.png`: a portrait phone screenshot of the Last Chinatown AR exhibit ("Final Memento: Dragon Gate"), with 3D houses floating over the real path and a narration subtitle. 790×1714 only (the pasted copy); not yet chosen for the deck.
 - `Oberon_youtube_N0uCOPFoPrg.mp4`: "ICQ Pool Movie Trailer", a fan's 81 s capture of Oberon's pool game for ICQ (gameplay 0:16–0:45, inside black bars). The deck's still, `deck/img/oberon-pool.png`, is the board alone (no player panel or controls) at 0:25.3, 730×428.
 - `icq-status-menu.png`: the Untame site's ICQ image (the logo beside the classic online-status menu), kept for reference. The deck uses the plain logo, `deck/img/icq.png`.
+- `GDC17_UX_ItayKeren_hires.png`: Itay at the GDC 2017 UX Summit podium beside his "Learn by play" slide (Mushroom 11), the full broadcast frame with the GDC 17 logo, 3570×2020 (pasted). The deck's `deck/img/gdc17-ux-summit.jpg` is the whole frame at 1920 wide. `GDC17_UX_ItayKeren.png` is a smaller, tighter copy from celiahodent.com (1246×539), kept for reference.
 - `RopeRescue_youtube_480.mp4`: "Rope Rescue Preview" (2012), from YouTube `nYGSO293Yck`. 52 s, 640×480 at 25 fps (the max there). Animated captions are burned in throughout, and the end card shows a Google Play badge. The pick is 0:11.5–0:17.5: forest into cave, whose two captions read as one line ("only one bird / can grab a rope").
 
 ## Open

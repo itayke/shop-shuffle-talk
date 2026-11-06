@@ -53,6 +53,19 @@ const DECK = {
       secs: 45,
     },
     {
+      title: 'Public Speaking',
+      topBullets: [
+        '4× GDC speaker (twice Best-in-Show)',
+        'TGDF Taipei 2016, NYU Practice 2016, Unite 2013 & 2014',
+        'Focus on education, user experience (UX), art, and tech'
+      ],
+      media: [
+        { src: 'img/gdc17-ux-summit.jpg', caption: 'GDC 2017' },
+      ],
+      notes: 'Scaffold: pictures to come. The craft thread, shared back with other developers.',
+      secs: 20,
+    },
+    {
       title: 'Work in progress',
       topBullets: ['**Cue Quest** mini-golf + billiard love child',
         '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
@@ -66,13 +79,14 @@ const DECK = {
 
     // ---- Games that did a job, in themed pairs
     {
-      section: 'Games that did a job',
+      section: 'Games with a job',
       title: 'Gastro VR',
       text: 'Virtual Reality GI Experience',
       sideBullets: [
         'Made for a healthcare conference booth',
         '2 weeks of solo work',
         'Acquired for $2M by a major pharma company'],
+      sideWidth: 'narrow',
       media: ['clips/gastro-vr.mp4'],
       notes: 'Health, part one: it trains the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
       secs: 40,
