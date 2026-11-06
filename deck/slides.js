@@ -18,6 +18,7 @@ const DECK = {
       title: 'ICQ',
       text: 'World\'s first Instant Messenger',
       sideBullets: ['Founding engineer, lead server engineer'],
+      sideWidth: 'wide',
       media: ['img/icq.png'],
       notes: 'The tech thread: people together, in real time.',
       secs: 25,

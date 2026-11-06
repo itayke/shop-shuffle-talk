@@ -148,8 +148,11 @@ const CAPTION = { color: '#dccfb5', font: 24 };
 const MARGIN_X = 96, MARGIN_TOP = 64;
 const BLOCK_GAP = 56, MEDIA_GAP = 40;
 const MEDIA_MAX_H = 784, MEDIA_MIN_H = 280;
-// The widest the text column grows beside media; flanking text keeps this far off the card and the stage edge
-const SIDE_TEXT_W = 640, FLANK_MARGIN = 48;
+// The widest the text column beside media grows, as a share of the width between the margins. A slide's `sideWidth` names
+// a share by word or gives a number, kept within the range; the media takes the rest
+const SIDE_WIDTHS = { narrow: 0.28, normal: 0.37, wide: 0.5 }, SIDE_WIDTH_RANGE = [0.15, 0.75];
+// Flanking text keeps this far off the card and the stage edge
+const FLANK_MARGIN = 48;
 // Text beside media centers this far down the cards
 const SIDE_RISE = 0.42;
 // Text goes beside the media only when that makes the media this much taller than with the text above it
@@ -197,7 +200,7 @@ const REVEAL_SFX = 'step';
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
-const SLIDE_KEYS = ['section', 'title', 'text', 'topBullets', 'sideBullets', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const SLIDE_KEYS = ['section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel'];
 const LAYOUTS = ['stack', 'side', 'flank'];
 
@@ -214,6 +217,20 @@ addEventListener('pointerdown', unlock, { once: true });
 addEventListener('keydown', unlock, { once: true });
 
 // ---- Reading the flow ------------------------------------------------------
+// The side column's widest, in stage pixels, from a slide's `sideWidth`: a word from SIDE_WIDTHS or a share of the width
+function sideWidth(v, warnings) {
+  const [lo, hi] = SIDE_WIDTH_RANGE;
+  let share = SIDE_WIDTHS.normal;
+  if (typeof v === 'number' && Number.isFinite(v)) {
+    share = Math.min(hi, Math.max(lo, v));
+    if (share !== v) warnings.push(`"sideWidth" ${v} is outside ${lo}–${hi}, so ${share} is used`);
+  } else if (v != null) {
+    if (SIDE_WIDTHS[v]) share = SIDE_WIDTHS[v];
+    else warnings.push(`Unknown sideWidth "${v}": use ${Object.keys(SIDE_WIDTHS).join(', ')}, or a number like 0.45`);
+  }
+  return Math.round(share * (STAGE_W - 2 * MARGIN_X));
+}
+
 // Fills in defaults and collects a warning for every field the deck doesn't know, so typos show up
 function readDeck() {
   const warnings = [];
@@ -239,6 +256,7 @@ function readDeck() {
     // Every bullet in reveal order: the top ones, then the side ones
     s.bullets = [...s.topBullets, ...s.sideBullets];
     if (s.layout && s.bullets.length) s.warnings.push('"layout" applies only to slides without bullets');
+    s.sideW = sideWidth(raw.sideWidth, s.warnings);
     s.media = (s.media == null ? [] : [].concat(s.media)).map((m) => {
       const item = typeof m === 'string' ? { src: m } : { ...m };
       for (const k of Object.keys(item)) if (!MEDIA_KEYS.includes(k)) s.warnings.push(`Unknown media field "${k}"`);
@@ -539,13 +557,13 @@ function planStack(s, type, aspects) {
 // Side bullets stand in a column left of the media, under whatever sits above it
 function planSide(s, type, aspects) {
   const t = planTop(s, type);
-  const block = textBlock({ bullets: s.sideBullets, color: s.color }, type, SIDE_TEXT_W, 'left');
+  const block = textBlock({ bullets: s.sideBullets, color: s.color }, type, s.sideW, 'left');
   const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - block.w - BLOCK_GAP, STREET_Y - t.bottom);
   return { mode: 'side', ...t, block, row, ok: t.fits && block.fits && block.h <= STREET_Y - t.bottom && row.h >= MEDIA_MIN_H };
 }
 // A slide without bullets may put its title and text in a column left of the media instead
 function planColumn(s, type, aspects) {
-  const block = textBlock(s, type, SIDE_TEXT_W, 'left');
+  const block = textBlock(s, type, s.sideW, 'left');
   const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - (block.w ? block.w + BLOCK_GAP : 0), STREET_Y - MARGIN_TOP);
   return { mode: 'side', block, row, ok: block.fits && block.h <= STREET_Y - MARGIN_TOP && row.h >= MEDIA_MIN_H };
 }

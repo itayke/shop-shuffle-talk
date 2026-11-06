@@ -14,6 +14,7 @@
   topBullets: ['One', 'Two'],      // a list under the text, above the media
   sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
                                    // in either list, **double asterisks** make words bold
+  sideWidth: 'wide',               // how wide the side column may grow: narrow, normal (default), wide, or a share like 0.45
   reveal: true,                    // bullets appear one per click, the top ones first
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
@@ -42,7 +43,7 @@ media: [
 
 ## Layouts
 
-Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, and the media stands on the sidewalk. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
+Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, and the media stands on the sidewalk. The column is only as wide as its longest line, up to `sideWidth` (a share of the stage's width between its margins); past that, lines wrap. A wider limit keeps lines whole and shrinks the media to make room. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
 
 A slide without bullets picks one of these by itself, the one that gives the media the most room; `layout` names one instead (it applies only to slides without bullets):
 
