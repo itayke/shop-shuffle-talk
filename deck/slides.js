@@ -41,7 +41,7 @@ const DECK = {
     },
     {
       title: 'Original Games',
-      topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Apple Design Award 2017, $1M+ revenue'],
+      topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
         {
