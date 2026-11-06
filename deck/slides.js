@@ -59,10 +59,14 @@ const DECK = {
     },
     {
       title: 'Spiropod',
-      text: 'For the patient',
+      text: 'Mental Wellness & Entertainment',
+      sideBullets: ['A handheld game console operated by breath',
+        'Aimed at reducing anxiety and other breath related issues',
+        'Guidance, Motivation, Distraction',
+        'Patent pending, working on scaling and securing capital'],
       media: ['img/spiropod.jpg'],
       notes: 'Health, part two. Patented, and known to this audience.',
-      secs: 30,
+      secs: 60,
     },
     {
       title: 'Learning',
