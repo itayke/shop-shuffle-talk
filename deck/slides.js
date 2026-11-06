@@ -36,12 +36,18 @@ const DECK = {
       secs: 45,
     },
     {
-      title: 'People, together',
-      text: 'In real time, built fast',
-      topBullets: ['ICQ: founding engineer, 100M+ users', 'Oberon: 30+ multiplayer games', 'Human Is', 'Claude Code: 15× throughput'],
-      reveal: true,
-      notes: 'The tech thread, one bullet per click. AI is its latest chapter, not a beat of its own.',
-      secs: 45,
+      title: 'ICQ',
+      text: 'Founding engineer of the first instant messenger, 100M+ users',
+      media: ['img/icq.png'],
+      notes: 'The tech thread: people together, in real time.',
+      secs: 25,
+    },
+    {
+      title: 'Oberon Media',
+      text: '30+ multiplayer casual games, millions of monthly players',
+      media: ['img/oberon-pool.png'],
+      notes: 'The tech thread, continued. Human Is and Claude Code (15× throughput) are said here, or folded in later; AI is its latest chapter, not a beat of its own.',
+      secs: 20,
     },
 
     // ---- Games that did a job, in themed pairs

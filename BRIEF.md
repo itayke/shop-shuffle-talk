@@ -72,6 +72,7 @@ Trims wait for the talk's structure. YouTube downloads are the best stream avail
 - `Venice_screen_recording_2026-11-06.mov`: a screen recording of Venice (working title), 2:25 at 2552×1428 and 60 fps, with a 2px black strip on the left and the mouse cursor showing. The pick is 1:10–1:20: a pan over the canal town, then a mission dialog with a character from about 1:17.
 - `spiropod-cool.jpg`: the Spiropod title image in its blue-teal variant, set aside because it blends into the deck's sky. The deck uses the warm cream variant, `deck/img/spiropod.jpg`.
 - `LastChinatown_dragon_gate_screenshot.png`: a portrait phone screenshot of the Last Chinatown AR exhibit ("Final Memento: Dragon Gate"), with 3D houses floating over the real path and a narration subtitle. 790×1714 only (the pasted copy); not yet chosen for the deck.
+- `Oberon_youtube_N0uCOPFoPrg.mp4`: "ICQ Pool Movie Trailer", a fan's 81 s capture of Oberon's pool game for ICQ (gameplay 0:16–0:45, inside black bars). The deck's still, `deck/img/oberon-pool.png`, is the board alone (no player panel or controls) at 0:25.3, 730×428.
 - `RopeRescue_youtube_480.mp4`: "Rope Rescue Preview" (2012), from YouTube `nYGSO293Yck`. 52 s, 640×480 at 25 fps (the max there). Animated captions are burned in throughout, and the end card shows a Google Play badge. The pick is 0:11.5–0:17.5: forest into cave, whose two captions read as one line ("only one bird / can grab a rope").
 
 ## Open
