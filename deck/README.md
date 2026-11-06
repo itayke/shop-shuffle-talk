@@ -41,7 +41,7 @@ media: [
 ## Layouts
 
 - **Stack**: words in the sky, media standing on the sidewalk below. The default.
-- **Side**: words in a column left of the media, chosen when that makes the media clearly larger (a portrait clip, or long bullets).
+- **Side**: the title and text stay on top, and the bullets stand in a column left of the media. Chosen for every slide with bullets and media, unless the media would get too small (several cards with long bullets, like the Games slide, stay stacked). Without bullets it's chosen only when it makes the media clearly larger (a portrait clip), and all the words go in the column.
 - **Flank**: a side layout without bullets puts the title left of the media and the text right of it, if the title fits.
 - **No media**: the words are centered in the sky with a larger title (the "Grab your phone" slide).
 

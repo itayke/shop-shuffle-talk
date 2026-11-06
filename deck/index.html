@@ -134,8 +134,10 @@ const STREET_Y = STREET_TOP * ART;
 const ROAD_Y = (STREET_TOP + SIDEWALK_H + CURB_H) * ART;
 
 // Each media item's card, like the lobby's QR join card in dark mode: a dark panel, hairline border, rounded card and footage
-const CARD = { bg: 'rgba(22,29,39,0.92)', line: '#283241', pad: 16, border: 1, radius: 12, clipRadius: 12 };
+const CARD = { bg: 'rgba(22,29,39,0.92)', line: '#283241', pad: 16, border: 1, clipRadius: 12 };
 const CARD_INSET = CARD.pad + CARD.border;
+// The card's corner follows the footage's corner out by the inset, so the two curves run parallel
+const CARD_RADIUS = CARD.clipRadius + CARD_INSET;
 // Cards for media still to come, or a file that didn't load
 const PLACEHOLDER = { bg: '#1c1a26', label: '#f5c746', text: '#d0d7e0', font: 24, pad: 32 };
 const CAPTION = { color: '#dccfb5', font: 24 };
@@ -158,12 +160,20 @@ const TYPE_STEPS = [
   { title: 3, hero: 5, text: 2, bullet: 2 },
 ];
 // Spacing in font pixels of the element below the gap: title to text, before the bullets, between bullets
-const GAP_TEXT = 5, GAP_BULLETS = 10, GAP_BULLET = 5;
-// The bullet's square and its gap to the words, in bullet font pixels; it centers this far above the baseline, in ems
-const BULLET_MARK = 9, BULLET_INDENT = 7, BULLET_MID = 0.3;
+// Bullets sit further apart than a wrapped bullet's own lines, so each still reads as one item
+const GAP_TEXT = 5, GAP_BULLETS = 10, GAP_BULLET = 8;
+// The bullet is a one-color pixel heart in the words' own color. Its pixels are this many bullet units each, and its gap
+// to the words is in bullet units
+const HEART = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
+const HEART_CELL = 1.5, BULLET_INDENT = 7;
+// The heart sits this many art pixels below the words' middle, where it reads as level with them
+const HEART_DROP = 1;
 const LEADING = 1.1;
 const TITLE_FONT = "'Jersey 15', 'Arial Black', Impact, sans-serif";
-const TITLE_FONT_LOAD = "400 27px 'Jersey 15'";
+// Bullets carry more words than the pixel faces read well at, so they use the game's sans, smooth. Its size is in bullet
+// units, its line pitch in ems, and a bullet's square centers this far above the baseline, in ems
+const BULLET_FONT = { family: "'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif", weight: 500, em: 18, leading: 1.25, mid: 0.35 };
+const FONT_LOADS = ["400 27px 'Jersey 15'", `${BULLET_FONT.weight} 36px 'Work Sans'`];
 // How opaque smooth text must be to become a solid pixel (as in pixel-title.js)
 const INK_ALPHA = 128;
 
@@ -391,6 +401,39 @@ function pixelText(text, px, maxW, align) {
   return { el: c, w: w / ratio, h: h / ratio, ascent: ascent / ratio, size: size / ratio };
 }
 
+// The bullet heart as hard-edged SVG, one square per filled pixel
+function heartEl(cell) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  const cols = HEART[0].length, rows = HEART.length;
+  svg.setAttribute('viewBox', `0 0 ${cols} ${rows}`);
+  svg.setAttribute('width', cols * cell); svg.setAttribute('height', rows * cell);
+  svg.setAttribute('shape-rendering', 'crispEdges'); svg.setAttribute('aria-hidden', 'true');
+  HEART.forEach((line, y) => [...line].forEach((ch, x) => {
+    if (ch !== 'X') return;
+    const r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1);
+    r.setAttribute('fill', TEXT_COLOR);
+    svg.append(r);
+  }));
+  return svg;
+}
+
+// A bullet's words in the game's sans, wrapped to a width; reports its first baseline so the square can line up with it
+const measure = document.createElement('canvas').getContext('2d');
+function sansText(text, px, maxW) {
+  const size = px * BULLET_FONT.em;
+  const font = `${BULLET_FONT.weight} ${size}px ${BULLET_FONT.family}`;
+  measure.font = font;
+  const lines = wrap(measure, text, maxW);
+  const lineH = Math.round(size * BULLET_FONT.leading);
+  const m = measure.measureText('Hg');
+  const a = m.fontBoundingBoxAscent ?? size * 0.8, d = m.fontBoundingBoxDescent ?? size * 0.2;
+  const w = Math.ceil(Math.max(1, ...lines.map((l) => measure.measureText(l).width)));
+  const e = el('div', `font:${font}; line-height:${lineH}px; color:${TEXT_COLOR}; white-space:pre; width:${w}px;`, lines.join('\n'));
+  return { el: e, w, h: lineH * lines.length, ascent: (lineH - a - d) / 2 + a, size };
+}
+
 // The slide's words as one column: title, text, then bullets. Reports its size and whether everything fit the width
 function textBlock(s, type, maxW, align, hero) {
   const box = el('div', `display:flex; flex-direction:column; align-items:${align === 'left' ? 'flex-start' : 'center'};`);
@@ -406,12 +449,14 @@ function textBlock(s, type, maxW, align, hero) {
   const rows = [];
   if (s.bullets.length) {
     const px = type.bullet;
-    const mark = BULLET_MARK * px, indent = BULLET_INDENT * px;
+    const cell = HEART_CELL * px, indent = BULLET_INDENT * px;
+    const mark = HEART[0].length * cell, markH = HEART.length * cell;
     const list = el('div', `display:flex; flex-direction:column; align-items:flex-start; gap:${GAP_BULLET * px}px;`);
     let lw = 0, lh = 0;
     s.bullets.forEach((b, i) => {
-      const t = pixelText(b, px, maxW - mark - indent, 'left');
-      const dot = el('div', `flex:none; width:${mark}px; height:${mark}px; background:${color}; border:${px}px solid ${C.ink}; margin-top:${Math.round(t.ascent - BULLET_MID * t.size - mark / 2)}px;`);
+      const t = sansText(b, px, maxW - mark - indent);
+      const dot = heartEl(cell);
+      dot.style.cssText = `flex:none; display:block; margin-top:${Math.round(t.ascent - BULLET_FONT.mid * t.size - markH / 2) + HEART_DROP * ART}px;`;
       const row = el('div', `display:flex; align-items:flex-start; gap:${indent}px;`);
       row.append(dot, t.el);
       list.append(row); rows.push(row);
@@ -439,6 +484,14 @@ function planStack(s, type, aspects) {
   return { mode: 'stack', block, row, ok: block.fits && row.h >= MEDIA_MIN_H };
 }
 function planSide(s, type, aspects) {
+  // With bullets, the title and text stay on top as in a stack, and only the bullets stand left of the media
+  if (s.bullets.length) {
+    const head = textBlock({ ...s, bullets: [] }, type, STAGE_W - 2 * MARGIN_X, 'center');
+    const block = textBlock({ bullets: s.bullets, color: s.color }, type, SIDE_TEXT_W, 'left');
+    const top = MARGIN_TOP + (head.h ? head.h + BLOCK_GAP : 0);
+    const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - block.w - BLOCK_GAP, STREET_Y - top);
+    return { mode: 'side', head, block, row, ok: head.fits && block.fits && block.h <= STREET_Y - top && row.h >= MEDIA_MIN_H };
+  }
   const block = textBlock(s, type, SIDE_TEXT_W, 'left');
   const row = fitRow(aspects, STAGE_W - 2 * MARGIN_X - (block.w ? block.w + BLOCK_GAP : 0), STREET_Y - MARGIN_TOP);
   return { mode: 'side', block, row, ok: block.fits && block.h <= STREET_Y - MARGIN_TOP && row.h >= MEDIA_MIN_H };
@@ -449,8 +502,9 @@ function firstFit(make) {
   return p;
 }
 
-// Picks the layout that gives the media the most room (leaning to text above), unless the slide names one. A side layout without bullets
-// becomes a flank: the media centered, the title on its left and the text on its right, if both fit
+// Bullets stand beside the media whenever that fits; otherwise picks the layout that gives the media the most room (leaning to text
+// above), unless the slide names one. A side layout without bullets becomes a flank: the media centered, the title on its left and
+// the text on its right, if both fit
 function plan(s) {
   if (!s.media.length) {
     const p = firstFit((type) => {
@@ -462,7 +516,7 @@ function plan(s) {
   const aspects = s.media.map(aspectOf);
   const stack = s.layout === 'side' || s.layout === 'flank' ? null : firstFit((t) => planStack(s, t, aspects));
   const side = s.layout === 'stack' ? null : firstFit((t) => planSide(s, t, aspects));
-  let p = !side ? stack : !stack ? side : (side.ok && (!stack.ok || side.row.h > stack.row.h * SIDE_BIAS)) ? side : stack;
+  let p = !side ? stack : !stack ? side : (side.ok && (!stack.ok || s.bullets.length || side.row.h > stack.row.h * SIDE_BIAS)) ? side : stack;
   if (p.mode === 'side' && s.layout !== 'side' && !s.bullets.length && s.title && s.text) {
     const room = (STAGE_W - p.row.rowW) / 2 - 2 * FLANK_MARGIN;
     const title = titleArt(s.title, p.type.title, TITLE_COLORS[s.color] || C.bannerGold);
@@ -514,7 +568,14 @@ function build(s, p) {
     const textW = p.block.w ? p.block.w + BLOCK_GAP : 0;
     const x0 = (STAGE_W - textW - row.rowW) / 2;
     x = x0 + textW;
-    const y = Math.max(MARGIN_TOP, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + row.rowH * SIDE_RISE - p.block.h / 2));
+    // A heading on top is centered over the stage like a stack's, and the column beside the media stays below it
+    let lo = MARGIN_TOP;
+    if (p.head && p.head.h) {
+      const headY = Math.max(MARGIN_TOP / 2, (rowTop - p.head.h) / 2);
+      stage.append(place(p.head.el, (STAGE_W - p.head.w) / 2, headY)); fades.push(p.head.el);
+      lo = headY + p.head.h + BLOCK_GAP;
+    }
+    const y = Math.max(lo, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + row.rowH * SIDE_RISE - p.block.h / 2));
     if (p.block.h) { stage.append(place(p.block.el, x0, y)); fades.push(p.block.el); }
     rows = p.block.rows;
   } else {
@@ -527,7 +588,7 @@ function build(s, p) {
   s.media.forEach((item, i) => {
     const w = row.widths[i];
     const boxW = w + 2 * CARD_INSET;
-    const card = el('div', `position:absolute; left:${Math.round(x)}px; top:${rowTop}px; width:${boxW}px; height:${row.rowH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD.radius}px; transform-origin:50% 100%;`);
+    const card = el('div', `position:absolute; left:${Math.round(x)}px; top:${rowTop}px; width:${boxW}px; height:${row.rowH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD_RADIUS}px; transform-origin:50% 100%;`);
     card.append(mediaEl(item, w, row.h));
     stage.append(card);
     cards.push({ el: card, top: rowTop, h: row.rowH });
@@ -689,7 +750,7 @@ stage.replaceChildren(street, sky);
 fit();
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 Promise.all([
-  Promise.race([document.fonts.load(TITLE_FONT_LOAD), wait(FONT_WAIT_MS)]),
+  Promise.race([Promise.all(FONT_LOADS.map((f) => document.fonts.load(f))), wait(FONT_WAIT_MS)]),
   ...slides.flatMap((s) => s.media.map(probe)),
 ]).then(() => {
   ready = true;
@@ -698,7 +759,7 @@ Promise.all([
   if (slides.length) show(Number.isFinite(fromHash) ? fromHash - 1 : 0, { shown: Number.isFinite(fromHash) ? Infinity : 0 });
   else updateWarningsOnly();
   // Text is measured from the font, so lay out again if it arrives after the wait
-  document.fonts.load(TITLE_FONT_LOAD).then(() => slides.length && show(cur, { shown: revealed }));
+  Promise.all(FONT_LOADS.map((f) => document.fonts.load(f))).then(() => slides.length && show(cur, { shown: revealed }));
 });
 function updateWarningsOnly() { $('warn').replaceChildren(...deckWarnings.map((w) => el('li', '', w))); }
 </script>

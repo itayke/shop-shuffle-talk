@@ -39,6 +39,7 @@ const DECK = {
       section: 'Games that did a job',
       title: 'VR Gastro',
       text: 'Sold for $2M',
+      bullets: ['a','b','c'],
       media: ['clips/gastro-vr.mp4'],
       notes: 'Health, part one: it trains the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
       secs: 40,
