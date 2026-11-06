@@ -43,7 +43,7 @@ media: [
 
 ## Layouts
 
-Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, and the media stands on the sidewalk. The column is only as wide as its longest line, up to `sideWidth` (a share of the stage's width between its margins); past that, lines wrap. A wider limit keeps lines whole and shrinks the media to make room. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
+Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, centered on it, and the media stands on the sidewalk. The column is only as wide as its longest line, up to `sideWidth` (a share of the stage's width between its margins); past that, lines wrap. A wider limit keeps lines whole and shrinks the media to make room. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
 
 A slide without bullets picks one of these by itself, the one that gives the media the most room; `layout` names one instead (it applies only to slides without bullets):
 

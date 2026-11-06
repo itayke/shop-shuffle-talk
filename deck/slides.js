@@ -29,9 +29,14 @@ const DECK = {
     },
     {
       title: 'Oberon Media',
-      text: '30+ multiplayer casual games, millions of monthly players',
+      text: 'Casual Games Service and Studio',
+      sideBullets: [
+        '30+ multiplayer casual games',
+        'Groundbreaking multiplayer system',
+        'Acquired and integrated into AOL',
+      ],
+      sideWidth: 'wide',
       media: ['img/oberon-pool.png'],
-      notes: 'The tech thread, continued. Human Is and Claude Code (15× throughput) are said here, or folded in later; AI is its latest chapter, not a beat of its own.',
       secs: 20,
     },
     {

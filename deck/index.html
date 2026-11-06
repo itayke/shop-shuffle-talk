@@ -153,7 +153,7 @@ const MEDIA_MAX_H = 784, MEDIA_MIN_H = 280;
 const SIDE_WIDTHS = { narrow: 0.28, normal: 0.37, wide: 0.5 }, SIDE_WIDTH_RANGE = [0.15, 0.75];
 // Flanking text keeps this far off the card and the stage edge
 const FLANK_MARGIN = 48;
-// Text beside media centers this far down the cards
+// A flank's title and text center this far down the cards; a side column centers on them
 const SIDE_RISE = 0.42;
 // Text goes beside the media only when that makes the media this much taller than with the text above it
 const SIDE_BIAS = 1.25;
@@ -664,7 +664,7 @@ function build(s, p) {
     // The column beside the media stays below the words above it (a column without bullets has none)
     let lo = MARGIN_TOP;
     if (p.head) { const end = placeTop(p, rowTop, fades); if (end > MARGIN_TOP) lo = end + BLOCK_GAP; }
-    const y = Math.max(lo, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + row.rowH * SIDE_RISE - p.block.h / 2));
+    const y = Math.max(lo, Math.min(STREET_Y - p.block.h - MARGIN_TOP, rowTop + (row.rowH - p.block.h) / 2));
     if (p.block.h) { stage.append(place(p.block.el, x0, y)); fades.push(p.block.el); }
     rows = [...(p.tops ? p.tops.rows : []), ...p.block.rows];
   } else {
