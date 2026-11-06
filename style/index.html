@@ -1,0 +1,347 @@
+<title>Shop Shuffle Style</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one column of street-wide bands, like the game's screen: sky hero, then the reference sections on the HUD's panel colors */
+:root {
+  --bg: #e7ebf0;
+  --panel: #f7f9fb;
+  --ink: #17202b;
+  --muted: #586374;
+  --line: #d0d7e0;
+  --accent: #e6a200;
+  --accent-ink: #17202b;
+  --chute: #2b78c6;
+  --ok: #24935f;
+  --sky-top: #7cc6ea;
+  --sky-low: #d9eff7;
+  --tagline: #2b3a55;
+  --font-title: 'Jersey 15', 'Arial Black', Impact, sans-serif;
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --font-body: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+    --accent: #f2b731; --chute: #5aa6f0; --ok: #4cc58b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+  --accent: #f2b731; --chute: #5aa6f0; --ok: #4cc58b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--font-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* The hero is always daytime sky, like the street */
+.sky { background: linear-gradient(var(--sky-top), var(--sky-low)); padding-block: 48px 0; overflow: hidden; }
+.sky .wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.sky canvas { display: block; image-rendering: pixelated; max-width: 100%; }
+.sky .note { font: 500 14px/1.4 var(--font-body); color: var(--tagline); text-align: center; margin: 4px 0 20px; }
+.hero-shot { display: block; width: 100%; max-width: 1120px; margin: 0 auto; image-rendering: pixelated; border-top: 4px solid #1c1a26; }
+
+section { padding-block: 56px; border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: 0; }
+.eyebrow { font: 400 10px/1 var(--font-pixel); letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; margin: 0 0 14px; }
+h2 { font: 400 48px/1 var(--font-title); margin: 0 0 8px; text-wrap: balance; }
+.lede { max-width: 64ch; color: var(--muted); margin: 0 0 28px; }
+.lede code, li code, td code { font: 500 0.88em ui-monospace, Menlo, monospace; color: var(--ink); }
+
+/* Screenshots */
+.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 20px; }
+figure { margin: 0; min-width: 0; }
+figure img { display: block; width: 100%; height: auto; image-rendering: pixelated; border: 3px solid #1c1a26; border-radius: 2px; }
+figcaption { display: flex; gap: 10px; align-items: baseline; margin-top: 8px; font-size: 14px; color: var(--muted); }
+figcaption b { font: 400 9px/1 var(--font-pixel); color: var(--ink); white-space: nowrap; }
+.wide { grid-column: 1 / -1; }
+
+/* Shops */
+.designs { background: #d9eff7; border: 3px solid #1c1a26; border-radius: 2px; overflow-x: auto; }
+.designs img { display: block; width: 100%; min-width: 640px; height: auto; image-rendering: pixelated; }
+.rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 28px; margin: 28px 0 0; padding: 0; list-style: none; }
+.rules li { min-width: 0; font-size: 15px; }
+.rules li b { display: block; font: 400 26px/1 var(--font-title); margin-bottom: 4px; }
+
+/* Color */
+.palettes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+.palettes h3 { font: 400 28px/1 var(--font-title); margin: 0 0 4px; }
+.palettes p { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.sw { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--panel); }
+.sw i { display: block; height: 44px; }
+.sw i.pair { display: grid; grid-template-columns: 1fr 1fr; }
+.sw span { display: block; padding: 6px 8px 7px; font-size: 12px; line-height: 1.3; }
+.sw code { font: 500 11px ui-monospace, Menlo, monospace; color: var(--muted); }
+
+/* Type */
+.type { display: grid; gap: 14px; }
+.spec { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px; align-items: center; padding: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.spec .meta { font-size: 13px; color: var(--muted); }
+.spec .meta b { display: block; color: var(--ink); font-size: 15px; font-weight: 600; }
+.spec .sample { min-width: 0; overflow-wrap: anywhere; }
+.spec canvas { display: block; image-rendering: pixelated; max-width: 100%; }
+.s-pixel { font: 400 16px/1.6 var(--font-pixel); }
+.s-pixel small { font-size: 8px; color: var(--muted); }
+.s-body { font: 400 18px/1.5 var(--font-body); }
+.s-body b { font-weight: 600; }
+
+/* Sound */
+.sound-head { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-bottom: 24px; }
+.btn { appearance: none; border: 0; font: 600 14px/1 var(--font-body); color: var(--accent-ink); background: var(--accent); padding: 11px 16px; border-radius: 6px; cursor: pointer; }
+.btn:hover { background: color-mix(in srgb, var(--accent), #fff 25%); }
+.btn:focus-visible, .pad:focus-visible { outline: 3px solid var(--chute); outline-offset: 2px; }
+.groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.group h3 { font: 400 28px/1 var(--font-title); margin: 0 0 10px; }
+.pads { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.pad { appearance: none; text-align: left; border: 1px solid var(--line); border-bottom-width: 3px; background: var(--panel); color: var(--ink); border-radius: 6px; padding: 10px 12px; cursor: pointer; font: inherit; min-width: 0; }
+.pad:hover { border-color: var(--accent); }
+.pad.on { background: color-mix(in srgb, var(--accent) 22%, var(--panel)); border-color: var(--accent); }
+.pad b { display: block; font-size: 14px; font-weight: 600; }
+.pad span { display: block; font-size: 12px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+.cues { margin-top: 36px; padding: 20px; border: 2px dashed var(--line); border-radius: 8px; }
+.cues h3 { font: 400 28px/1 var(--font-title); margin: 0 0 4px; }
+.cues p { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+
+/* Files */
+.files { width: 100%; border-collapse: collapse; font-size: 14px; }
+.files td { padding: 9px 12px 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.files td:first-child { white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+pre { margin: 20px 0 0; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow-x: auto; font: 13px/1.6 ui-monospace, Menlo, monospace; }
+
+@media (max-width: 760px) {
+  .shots, .palettes, .groups { grid-template-columns: minmax(0, 1fr); }
+  .rules { grid-template-columns: minmax(0, 1fr); }
+  .spec { grid-template-columns: minmax(0, 1fr); }
+  h2 { font-size: 40px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="sky">
+  <div class="wrap">
+    <canvas id="title" role="img" aria-label="Shop Shuffle"></canvas>
+    <canvas id="tagline" role="img" aria-label="Get your business moving"></canvas>
+    <p class="note">How Shop Shuffle looks and sounds, for the talk deck. Every image is a real frame from the game.</p>
+  </div>
+  <img class="hero-shot" src="img/street-crowd.png" alt="The street during walk-ins: sixteen shops, some stacked two high, with a crowd crossing at the zebra">
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">The street</p>
+      <h2>One street, always daytime</h2>
+      <p class="lede">The big screen is a side-on street: sky, a hazy skyline, the sidewalk where shops stand, and the road where customers cross. It stays in daylight whatever the page theme. Frames below are from a round with 16 bot phones, at 1920×1080 with the presenter bar cropped off.</p>
+      <div class="shots">
+        <figure class="wide"><img src="img/street-lobby.png" alt="The lobby: the title and tagline over the sky, a QR join card, and the list of shops open"><figcaption><b>Lobby</b> Phones scan in, and each shop drops from the sky as it opens. This is the deck's last slide.</figcaption></figure>
+        <figure><img src="img/street-walkins-banner.png" alt="The WALK-INS! banner in green over the street"><figcaption><b>Walk-ins</b> The banner that starts the round.</figcaption></figure>
+        <figure><img src="img/street-crowd.png" alt="Shops stacked in towers while customers cross the road"><figcaption><b>Walk-ins</b> Shops walk to where the customers are, climbing each other on the way.</figcaption></figure>
+        <figure><img src="img/street-parachutes.png" alt="Parachuters drifting down over the shops"><figcaption><b>Parachutes</b> Phase two: customers drop from the sky.</figcaption></figure>
+        <figure><img src="img/street-catch.png" alt="A shop on top of a tower catches a parachuter, with a +10 float"><figcaption><b>A catch</b> A shop on top of a tower catches a parachuter: +10.</figcaption></figure>
+        <figure class="wide"><img src="img/street-podium.png" alt="The end card: the winner's name in a banner, a podium with places 1 to 3, the live ranking and the contact card"><figcaption><b>Podium</b> The end card: winner banner, podium, ranking and contact. The talk ends here.</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Shops</p>
+      <h2>Ten storefronts, any color</h2>
+      <p class="lede">Every shop is drawn in code from parts (sign, awning, wall, window, door), so a name typed on a phone becomes a storefront live. Ten designs, each in a player's own tint; three tints shown.</p>
+      <div class="designs"><img src="img/shops-designs.png" alt="Ten shop designs, each in three tints: Fresh Fruit, Corner Cafe, Daily Bread, Book Nook, Petal Shop, Sharp Cuts, Big Bite, Silk Row, Scoops, Spin City"></div>
+      <ul class="rules">
+        <li><b>A 32-pixel column</b>One shop is one column wide and one floor tall; stacked shops touch.</li>
+        <li><b>Three shades a tint</b>Light, base and dark of one hue, the hues spread so neighbors never match.</li>
+        <li><b>Ink outlines</b>A dark ink line around everything: shops, legs, people, clouds.</li>
+        <li><b>Thin walking legs</b>Two segments, knees out. They fold away when a shop sits.</li>
+        <li><b>Tiny signs</b>Names in a 3×5 pixel font, two short lines at most.</li>
+        <li><b>Loud underwear</b>Shorts in tacky dots or stripes, picked from the shop's name.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Color</p>
+      <h2>Two palettes</h2>
+      <p class="lede">Screen chrome (bars, panels, buttons) follows light and dark mode. The street never does: it keeps its own daylight palette.</p>
+      <div class="palettes">
+        <div>
+          <h3>Screen</h3>
+          <p>Light and dark halves. The amber accent is the title and the primary button.</p>
+          <div class="swatches" id="ui-swatches"></div>
+        </div>
+        <div>
+          <h3>Street</h3>
+          <p>Fixed daylight colors from the game's renderer.</p>
+          <div class="swatches" id="street-swatches"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Type</p>
+      <h2>Three faces</h2>
+      <p class="lede">All three are on Google Fonts. The pixel faces stay crisp only at whole multiples of their grid: Jersey 15 at 27 px per pixel step, Press Start 2P at 8.</p>
+      <div class="type">
+        <div class="spec">
+          <div class="meta"><b>Jersey 15</b>Titles and banners. Drawn hard-edged with a round dark outline (pixel-title.js).</div>
+          <div class="sample"><canvas id="spec-title" role="img" aria-label="WALK-INS!"></canvas></div>
+        </div>
+        <div class="spec">
+          <div class="meta"><b>Press Start 2P</b>Small pixel labels. Sizes 8, 16, 24 px.</div>
+          <div class="sample s-pixel">PARACHUTES 0:28<br><small>ENTER BEGIN · SPACE PAUSE</small></div>
+        </div>
+        <div class="spec">
+          <div class="meta"><b>Work Sans</b>Everything people read: lists, cards, body text. 400, 500, 600.</div>
+          <div class="sample s-body"><b>16 shops open.</b> Scan the code and name your shop: it drops onto the street.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">Sound</p>
+      <h2>8-bit, no music</h2>
+      <div class="sound-head">
+        <p class="lede" style="margin:0">The game's own synth, the same code: NES-style pulse, triangle and noise channels, built in the browser with no audio files. Click any pad.</p>
+      </div>
+      <div class="groups" id="groups"></div>
+      <div class="cues">
+        <h3>Ideas for the deck</h3>
+        <p>Suggestions only. A sound on every slide gets old fast; two or three moments is plenty.</p>
+        <div class="pads" id="cue-pads"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="eyebrow">For the deck</p>
+      <h2>Files</h2>
+      <p class="lede">Copies are in <code>~/Documents/shop-shuffle-talk/style/</code>. Both scripts are plain files with no dependencies, made to sit next to the deck page and work offline.</p>
+      <div class="table-scroll">
+        <table class="files">
+          <tr><td><code>img/street-*.png</code></td><td>The six frames above, 1920×1032, presenter bar removed. Scale with <code>image-rendering: pixelated</code>.</td></tr>
+          <tr><td><code>img/shops-designs.png</code></td><td>The ten designs in three tints.</td></tr>
+          <tr><td><code>shop-sfx.js</code></td><td>The game's synth and every sound. <code>ShopSfx.play(id)</code>; <code>ShopSfx.ids</code> lists them.</td></tr>
+          <tr><td><code>pixel-title.js</code></td><td>Titles like the lobby's: <code>PixelTitle.when(canvas, text, { px, color, outline })</code>.</td></tr>
+          <tr><td><code>tokens.css</code></td><td>The screen's color and font tokens, light and dark.</td></tr>
+        </table>
+      </div>
+<pre>&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&amp;family=Press+Start+2P&amp;family=Work+Sans:wght@400;500;600&amp;display=swap"&gt;
+&lt;script src="shop-sfx.js"&gt;&lt;/script&gt;
+&lt;script src="pixel-title.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  PixelTitle.when(document.querySelector('#title'), 'Shop Shuffle', { px: 5 });
+  // Audio starts on the first key or click (the clicker's first press counts)
+  addEventListener('keydown', (e) =&gt; { if (e.key === 'ArrowRight') ShopSfx.play('step', { foot: n++ % 2 }); });
+&lt;/script&gt;</pre>
+    </div>
+  </section>
+</main>
+
+<script src="shop-sfx.js"></script>
+<script src="pixel-title.js"></script>
+<script>
+// Titles: the biggest whole pixel size that fits the hero
+const fitTitle = () => {
+  const avail = document.querySelector('.sky .wrap').clientWidth - 32;
+  const probe = document.createElement('canvas');
+  PixelTitle.draw(probe, 'Shop Shuffle', { px: 1 });
+  const px = Math.max(2, Math.min(6, Math.floor(avail / (probe.width / (devicePixelRatio || 1)))));
+  PixelTitle.draw(document.getElementById('title'), 'Shop Shuffle', { px });
+  PixelTitle.draw(document.getElementById('tagline'), 'Get your business moving', { px: Math.max(1, Math.round(px * 0.45)), color: '#2b3a55', outline: null, upper: false });
+  PixelTitle.draw(document.getElementById('spec-title'), 'Walk-ins!', { px: Math.min(3, px), color: '#52a65e', outline: '#1c1a26' });
+};
+fitTitle();
+document.fonts.load("400 27px 'Jersey 15'").then(fitTitle);
+let resizeTimer;
+addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(fitTitle, 150); });
+
+// Swatches
+const UI = [
+  ['Background', '#e7ebf0', '#0f141b', '--bg'], ['Panel', '#f7f9fb', '#161d27', '--panel'], ['Ink', '#17202b', '#e4e9ef', '--ink'],
+  ['Muted', '#586374', '#93a0b1', '--muted'], ['Line', '#d0d7e0', '#283241', '--line'], ['Accent', '#e6a200', '#f2b731', '--accent'],
+  ['Parachutes', '#2b78c6', '#5aa6f0', '--chute'], ['OK / Begin', '#24935f', '#4cc58b', '--ok'], ['Danger', '#d2462a', '#f06a4e', '--danger'],
+];
+const STREET = [
+  ['Sky, top', '#7cc6ea'], ['Sky, low', '#d9eff7'], ['Skyline', '#b2d4e0'], ['Sidewalk', '#cdbd9f'], ['Curb', '#857563'],
+  ['Asphalt', '#3c414f'], ['Zebra', '#eeeae0'], ['Ink', '#1c1a26'], ['Sign cream', '#f5ebd5'], ['Lamp glass', '#ffd98a'],
+  ['Banner gold', '#f5c746'], ['Leaf green', '#52a65e'], ['Silver', '#d3d8e0'], ['Bronze', '#d08a4e'],
+];
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+for (const [name, light, dark, token] of UI) {
+  const s = el('div', 'sw');
+  const i = el('i', 'pair');
+  i.append(Object.assign(el('b'), { style: `background:${light}` }), Object.assign(el('b'), { style: `background:${dark}` }));
+  s.append(i, el('span', '', `${name}<br><code>${light} · ${dark}</code>`));
+  document.getElementById('ui-swatches').append(s);
+}
+for (const [name, hex] of STREET) {
+  const s = el('div', 'sw');
+  s.append(Object.assign(el('i'), { style: `background:${hex}` }), el('span', '', `${name}<br><code>${hex}</code>`));
+  document.getElementById('street-swatches').append(s);
+}
+
+// Sound pads. A pad can play a short phrase: a run of steps, a row of shutters, the last seconds
+const after = (ms, fn) => setTimeout(fn, ms);
+const seq = (items, gapMs) => items.forEach((fn, i) => after(i * gapMs, fn));
+const P = (id, o) => () => ShopSfx.play(id, o);
+const chain = (a, b) => () => { ShopSfx.play(a); after(ShopSfx.length(a) * 1000, () => ShopSfx.play(b)); };
+const GROUPS = [
+  ['Moving', [
+    ['Walk', 'Footfalls, tik-tok', () => seq([0, 1, 0, 1, 0, 1].map((f) => P('step', { foot: f })), 115)],
+    ['Walk up a tower', 'Two floors up walks higher', () => seq([0, 1, 0, 1].map((f) => P('step', { foot: f, level: 2 })), 115)],
+    ['Sit', 'Legs fold when a walk ends', P('sit')],
+    ['Push strain', 'Grunts climb as a tower wobbles', () => seq([0, 1, 2, 3].map((s) => P('strain', { step: s })), 260)],
+    ['Topple', 'The fall, then the landing', chain('topple', 'land')],
+    ['Bump', 'Two shops collide', P('bump')],
+    ['Shop drops in', 'A new shop falls onto the street', chain('drop', 'land')],
+  ]],
+  ['Customers', [
+    ['Pay', 'A walk-in pays', P('coin')],
+    ['Parachute pay', 'A catch from the sky', P('paraCoin')],
+    ['Lost', 'A customer walks away', P('lost')],
+    ['Push-back', 'A push turned away', P('pushback')],
+  ]],
+  ['Shutters', [
+    ['Shutter down', 'A row a click, then shut', () => { seq([0, 1, 2, 3, 4, 5].map((r) => P('shutRow', { row: r })), 180); after(6 * 180, P('shutDown')); }],
+    ['Shutter up', 'Back open', P('shutUp')],
+  ]],
+  ['Round', [
+    ['Ready', 'The countdown banner', P('ready')],
+    ['Walk-ins!', 'The round starts', P('walkIns')],
+    ['Parachutes!', 'Phase two', P('parachutes')],
+    ['Crosswalk', 'Bars before a crowd crosses', () => { seq([0, 1, 2].map(() => P('bar')), 420); after(3 * 420, P('bar', { last: true })); }],
+    ['Last seconds', 'One tick a second', () => seq([0, 1, 2, 3, 4].map(() => P('tick')), 1000)],
+    ['Winner', 'A run up, then silence', P('winner')],
+  ]],
+];
+const CUES = [
+  ['Next slide', 'One footfall, feet alternating', (() => { let f = 0; return () => ShopSfx.play('step', { foot: f++ % 2 }); })()],
+  ['A number lands', 'Pay, on a stat or a sale', P('coin')],
+  ['New section', 'Ready, quiet and short', P('ready')],
+  ['Grab your phone', 'Walk-ins, into the lobby', P('walkIns')],
+];
+const pad = ([name, hint, fn]) => {
+  const b = el('button', 'pad', `<b>${name}</b><span>${hint}</span>`);
+  b.type = 'button';
+  b.addEventListener('click', () => { ShopSfx.unlock(); fn(); b.classList.add('on'); after(220, () => b.classList.remove('on')); });
+  return b;
+};
+for (const [title, pads] of GROUPS) {
+  const g = el('div', 'group');
+  g.append(el('h3', '', title));
+  const wrap = el('div', 'pads');
+  pads.forEach((p) => wrap.append(pad(p)));
+  g.append(wrap);
+  document.getElementById('groups').append(g);
+}
+CUES.forEach((c) => document.getElementById('cue-pads').append(pad(c)));
+</script>

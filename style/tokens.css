@@ -1,0 +1,28 @@
+/* Shop Shuffle's screen tokens, from the game (packages/screen/src/styles.css). The street's own colors never follow the theme */
+:root {
+  --bg: #e7ebf0;
+  --panel: #f7f9fb;
+  --ink: #17202b;
+  --muted: #586374;
+  --line: #d0d7e0;
+  --accent: #e6a200;
+  --accent-ink: #17202b;
+  --chute: #2b78c6;
+  --danger: #d2462a;
+  --ok: #24935f;
+  /* Street colors for titles and banners: banner gold, outline ink, tagline on the sky */
+  --banner: #f5c746;
+  --street-ink: #1c1a26;
+  --tagline: #2b3a55;
+  --sky-top: #7cc6ea;
+  --sky-low: #d9eff7;
+  --font-title: 'Jersey 15', 'Arial Black', Impact, sans-serif;
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --font-body: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+    --accent: #f2b731; --chute: #5aa6f0; --danger: #f06a4e; --ok: #4cc58b; color-scheme: dark;
+  }
+}

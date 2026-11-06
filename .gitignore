@@ -1,0 +1,15 @@
+# Original footage: large, and mostly third-party
+raw/
+
+# Video anywhere (trimmed clips are rebuilt from raw/ by clips.sh, and published with each artifact)
+*.mp4
+*.mov
+*.m4v
+*.webm
+*.mkv
+*.avi
+
+# Temporary screenshot wrappers
+_preview.html
+
+.DS_Store

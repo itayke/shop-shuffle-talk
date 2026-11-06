@@ -1,0 +1,408 @@
+<title>Clip Slide Sketch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: the page is chrome around one 16:9 stage; the stage is always the game's daytime street, the chrome follows the theme */
+:root {
+  --bg: #e7ebf0;
+  --panel: #f7f9fb;
+  --ink: #17202b;
+  --muted: #586374;
+  --line: #d0d7e0;
+  --accent: #e6a200;
+  --accent-ink: #17202b;
+  --chute: #2b78c6;
+  --frame-bg: #17202b;
+  --font-title: 'Jersey 15', 'Arial Black', Impact, sans-serif;
+  --font-pixel: 'Press Start 2P', ui-monospace, monospace;
+  --font-body: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+    --accent: #f2b731; --chute: #5aa6f0; --frame-bg: #06090d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f141b; --panel: #161d27; --ink: #e4e9ef; --muted: #93a0b1; --line: #283241;
+  --accent: #f2b731; --chute: #5aa6f0; --frame-bg: #06090d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--font-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 32px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+
+header { display: grid; gap: 6px; }
+.eyebrow { font: 400 10px/1 var(--font-pixel); letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; margin: 0; }
+h1 { font: 400 52px/1 var(--font-title); margin: 0; text-wrap: balance; }
+.lede { margin: 0; max-width: 68ch; color: var(--muted); }
+
+/* The stage: a fixed 1920×1080 slide, scaled to fit its frame */
+.frame { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; background: var(--frame-bg); border-radius: 4px; overflow: hidden; cursor: pointer; }
+.frame:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; border-radius: 0; background: #000; }
+.stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: #7cc6ea; }
+.stage canvas { image-rendering: pixelated; }
+.scene { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+.banner { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+/* Controls */
+.controls { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--panel); }
+.seg button { appearance: none; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 14px/1 var(--font-body); padding: 10px 14px; cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn { appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 500 14px/1 var(--font-body); padding: 10px 14px; border-radius: 6px; cursor: pointer; }
+.btn:hover, .seg button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--chute); outline-offset: 2px; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+.note { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 32px; padding: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.note h2 { font: 400 30px/1 var(--font-title); margin: 0 0 10px; }
+.note ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; }
+.note li b { font-weight: 600; }
+.keys { font: 400 8px/2 var(--font-pixel); color: var(--muted); margin: 0; }
+@media (max-width: 760px) {
+  .note { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 40px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Shop Shuffle talk · sketch 3</p>
+    <h1>Clips drop in like new shops</h1>
+    <p class="lede">Each clip falls from high above the screen and lands on the street with the game's squash, framed like the lobby's QR card. Its title floats in the sky as a banner, and the text under it is set like the lobby's tagline. Press → to step between two slides, as a clicker would.</p>
+  </header>
+
+  <div class="frame" id="frame">
+    <div class="stage" id="stage" aria-label="Slide preview"></div>
+  </div>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Slide">
+      <button type="button" id="c-gastro" data-c="gastro">VR Gastro, 16:9</button>
+      <button type="button" id="c-cue" data-c="cue">Cue Quest, portrait</button>
+    </div>
+    <button type="button" class="btn" id="replay">Replay drop</button>
+    <label class="check"><input type="checkbox" id="sound" checked> Sound</label>
+    <button type="button" class="btn" id="full">Full screen</button>
+  </div>
+
+  <div class="note">
+    <div>
+      <h2>How it moves</h2>
+      <ul>
+        <li><b>The fall</b> speeds up the way a joining shop's does, over the same time, but starts far above the screen: the clip is out of sight while the video loads and comes in fast.</li>
+        <li><b>The landing</b> squashes the clip by the game's own amount and plays its land sound. No bounce.</li>
+        <li><b>The text</b> washes in once the clip has landed, so the eye goes to the footage first. The title is a banner; the line under it has no outline and wraps, so it can carry more words.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Still to decide</h2>
+      <ul>
+        <li><b>Title colors.</b> The game uses gold for READY?, green for WALK-INS! and blue for PARACHUTES!. All titles are gold here; the colors could also mark the talk's sections.</li>
+        <li><b>The words.</b> Both lines are placeholders. Over a 16:9 clip the sky fits about one line of text; more needs a smaller clip.</li>
+        <li><b>The exit.</b> For now the old slide just disappears. It could also be pushed off by the next one.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="keys">→ OR PAGE DOWN: NEXT SLIDE · ← OR PAGE UP: PREVIOUS · R: REPLAY · F: FULL SCREEN · B AND . DO NOTHING</p>
+</div>
+
+<script src="shop-sfx.js"></script>
+<script src="pixel-title.js"></script>
+<script>
+// ---- Constants -------------------------------------------------------------
+const STAGE_W = 1920, STAGE_H = 1080;
+// The street is drawn at quarter resolution and scaled up, so one art pixel is this many stage pixels
+const ART = 4;
+const ART_W = STAGE_W / ART, ART_H = STAGE_H / ART;
+const snap = (v) => Math.round(v / ART) * ART;
+
+// The street's fixed daylight palette and banner colors (from the game's renderer), plus the shades the sketch derives
+const C = {
+  skyTop: '#7cc6ea', skyLow: '#d9eff7', skyline: '#b2d4e0', skylineWin: '#a5c9d8',
+  sidewalk: '#cdbd9f', sidewalkLit: '#dccfb5', seam: '#b8a88a', curb: '#857563',
+  asphalt: '#3c414f', grit: '#474c5b', ink: '#1c1a26',
+  bannerGold: '#f5c746', bannerGreen: '#52a65e', bannerBlue: '#4a86d8',
+  cloud: '#ffffff', cloudShade: '#dcedf5',
+};
+
+// The sidewalk's top edge, in art pixels; clips land on it
+const STREET_TOP = 236;
+const SIDEWALK_H = 14, CURB_H = 2, SKY_BANDS = 5;
+const STREET_Y = STREET_TOP * ART;
+
+// One slide per clip: its footage and its short banner lines
+const SLIDES = {
+  gastro: { src: 'clips/gastro-vr.mp4', shape: 'wide', title: 'VR Gastro', line: 'Sold for $2M!' },
+  cue: { src: 'clips/cue-quest.mp4', shape: 'tall', title: 'Cue Quest', line: 'In development. A longer line wraps on its own.' },
+};
+const ORDER = ['gastro', 'cue'];
+
+// Clip sizes on the stage, in stage pixels
+const WIDE_W = 1088, TALL_H = 784;
+// The clip's card, like the lobby's QR join card: a light panel, hairline border, rounded card and rounded footage
+const CARD = { bg: 'rgba(247,249,251,0.92)', line: '#d0d7e0', pad: 16, border: 1, radius: 12, clipRadius: 12 };
+
+// Type, in screen pixels per font pixel: the title like the game's round banners, the text like the lobby's tagline
+const TITLE_PX = 4, TAGLINE_PX = 3;
+const TAGLINE_COLOR = '#2b3a55';
+// Room between title and text, in title pixels (the lobby's tagline gap), and the text's line pitch in ems
+const TAGLINE_GAP = 5, TAGLINE_LEADING = 1.1;
+// Keeps side text off the clip and the stage edge, in stage pixels
+const SIDE_MARGIN = 48;
+const TITLE_FONT = "'Jersey 15', 'Arial Black', Impact, sans-serif";
+// How opaque smooth text must be to become a solid pixel (as in pixel-title.js)
+const INK_ALPHA = 128;
+
+// Motion, from the game's MOTION_LOOK: drop time, squash amount and time
+const DROP_MS = 600, SQUASH = 0.2, SQUASH_MS = 250;
+// The clip starts this many times its on-screen fall above the stage, so it spends the drop's first part (while the
+// video loads) out of sight and comes in fast
+const DROP_LEAD = 2;
+const BANNER_FADE_MS = 250;
+
+// ---- State -------------------------------------------------------------------
+let slide = 'gastro';
+let anim = 0;
+const stage = document.getElementById('stage');
+const frame = document.getElementById('frame');
+const soundBox = document.getElementById('sound');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+const sfx = (id, opts) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id, opts); } catch (e) {} };
+const unlock = () => { try { window.ShopSfx && ShopSfx.unlock(); } catch (e) {} };
+addEventListener('pointerdown', unlock, { once: true });
+addEventListener('keydown', unlock, { once: true });
+
+// ---- Drawing the street ------------------------------------------------------
+// A small seeded random, so the skyline and the road's grit are the same on every draw
+const rng = (seed) => () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+const mix = (a, b, t) => {
+  const p = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [p(a), p(b)];
+  return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(',')})`;
+};
+const CLOUDS = [[38, 34, 1], [176, 18, 0], [300, 58, 1], [404, 26, 0]];
+function cloud(ctx, x, y, big) {
+  const w = big ? 34 : 24;
+  ctx.fillStyle = C.cloud;
+  ctx.fillRect(x, y + 4, w, 5);
+  ctx.fillRect(x + 4, y + 1, w * 0.45, 4);
+  ctx.fillRect(x + w * 0.4, y - 1, w * 0.35, 6);
+  ctx.fillStyle = C.cloudShade;
+  ctx.fillRect(x, y + 9, w, 2);
+}
+
+// Paints the 1920×1080 street: banded, dithered sky, the hazy skyline, the sidewalk and the road
+function drawStreet() {
+  const canvas = document.createElement('canvas');
+  canvas.width = ART_W; canvas.height = ART_H;
+  canvas.className = 'scene';
+  const ctx = canvas.getContext('2d');
+  const top = STREET_TOP;
+  const bandH = Math.ceil(top / SKY_BANDS);
+  for (let b = 0; b < SKY_BANDS; b++) {
+    ctx.fillStyle = mix(C.skyTop, C.skyLow, b / (SKY_BANDS - 1));
+    ctx.fillRect(0, b * bandH, ART_W, bandH);
+    if (b === 0) continue;
+    // Two rows of checker dither soften each band edge, like the game's sky
+    ctx.fillStyle = mix(C.skyTop, C.skyLow, (b - 1) / (SKY_BANDS - 1));
+    for (let x = 0; x < ART_W; x += 2) { ctx.fillRect(x, b * bandH, 1, 1); ctx.fillRect(x + 1, b * bandH + 1, 1, 1); }
+  }
+  CLOUDS.forEach(([x, y, big]) => cloud(ctx, x, y, big));
+  const r = rng(7);
+  for (let x = -4; x < ART_W;) {
+    const w = 18 + Math.floor(r() * 26), h = 26 + Math.floor(r() * 54);
+    ctx.fillStyle = C.skyline;
+    ctx.fillRect(x, top - h, w - 2, h);
+    ctx.fillStyle = C.skylineWin;
+    for (let wy = top - h + 4; wy < top - 4; wy += 6) for (let wx = x + 3; wx < x + w - 5; wx += 5) ctx.fillRect(wx, wy, 2, 2);
+    x += w + Math.floor(r() * 10);
+  }
+  ctx.fillStyle = C.ink; ctx.fillRect(0, top - 1, ART_W, 1);
+  ctx.fillStyle = C.sidewalk; ctx.fillRect(0, top, ART_W, SIDEWALK_H);
+  ctx.fillStyle = C.sidewalkLit; ctx.fillRect(0, top, ART_W, 1);
+  ctx.fillStyle = C.seam; for (let x = 7; x < ART_W; x += 14) ctx.fillRect(x, top + 1, 1, SIDEWALK_H - 1);
+  ctx.fillStyle = C.curb; ctx.fillRect(0, top + SIDEWALK_H, ART_W, CURB_H);
+  const road = top + SIDEWALK_H + CURB_H;
+  ctx.fillStyle = C.asphalt; ctx.fillRect(0, road, ART_W, ART_H - road);
+  const g = rng(11); ctx.fillStyle = C.grit;
+  for (let i = 0; i < 260; i++) ctx.fillRect(Math.floor(g() * ART_W), road + 1 + Math.floor(g() * (ART_H - road - 1)), 1, 1);
+  return canvas;
+}
+const street = drawStreet();
+
+// ---- Building blocks ---------------------------------------------------------
+const el = (tag, css, html) => { const e = document.createElement(tag); if (css) e.style.cssText = css; if (html != null) e.innerHTML = html; return e; };
+function video(src, css) {
+  const v = el('video', css);
+  Object.assign(v, { src, muted: true, loop: true, autoplay: true, playsInline: true });
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+  v.play().catch(() => {});
+  return v;
+}
+function banner(text, px, color) {
+  const c = document.createElement('canvas');
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', text);
+  PixelTitle.when(c, text, { px, color, outline: C.ink });
+  return c;
+}
+
+// Greedy word wrap to a width; a newline in the text forces a break
+function wrap(ctx, text, maxW) {
+  const out = [];
+  for (const para of text.split('\n')) {
+    let line = '';
+    for (const word of para.split(' ')) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(next).width > maxW) { out.push(line); line = word; } else line = next;
+    }
+    out.push(line);
+  }
+  return out;
+}
+
+// The short text in the lobby tagline's style: Jersey 15 made hard-edged, no outline, centered lines wrapped to a width
+function tagline(text, px, color, maxW) {
+  const c = document.createElement('canvas');
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', text);
+  const draw = () => {
+    const ratio = window.devicePixelRatio || 1;
+    const unit = px * ratio;
+    const size = Math.round(unit * PixelTitle.GRID);
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    const font = `400 ${size}px ${TITLE_FONT}`;
+    ctx.font = font;
+    const lines = wrap(ctx, text, maxW * ratio);
+    const m = ctx.measureText(text);
+    const ascent = Math.ceil(m.fontBoundingBoxAscent), descent = Math.ceil(m.fontBoundingBoxDescent);
+    // Line pitch and each line's start stay on whole font pixels, so every line is equally crisp
+    const pitch = Math.round((size * TAGLINE_LEADING) / unit) * unit;
+    const widths = lines.map((l) => Math.ceil(ctx.measureText(l).width));
+    const w = Math.max(1, ...widths), h = ascent + descent + pitch * (lines.length - 1);
+    c.width = w; c.height = h;
+    c.style.width = `${w / ratio}px`; c.style.height = `${h / ratio}px`;
+    ctx.font = font; ctx.fillStyle = color;
+    lines.forEach((l, i) => ctx.fillText(l, Math.round((w - widths[i]) / 2 / unit) * unit, ascent + i * pitch));
+    const img = ctx.getImageData(0, 0, w, h);
+    for (let i = 3; i < img.data.length; i += 4) img.data[i] = img.data[i] >= INK_ALPHA ? 255 : 0;
+    ctx.putImageData(img, 0, 0);
+  };
+  draw();
+  document.fonts.load(`400 27px 'Jersey 15'`).then(draw);
+  return c;
+}
+
+// ---- The slide ----------------------------------------------------------------
+// The clip stands on the sidewalk, centered; the banners float in the sky it leaves free
+function build(s) {
+  stage.replaceChildren(street);
+  const wide = s.shape === 'wide';
+  const w = wide ? WIDE_W : Math.round(TALL_H * 9 / 16);
+  const h = wide ? Math.round(WIDE_W * 9 / 16) : TALL_H;
+  const inset = CARD.pad + CARD.border;
+  const boxW = w + 2 * inset, boxH = h + 2 * inset;
+  const top = STREET_Y - boxH;
+  const clipBox = el('div', `position:absolute; left:${(STAGE_W - boxW) / 2}px; top:${top}px; width:${boxW}px; height:${boxH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD.radius}px; transform-origin:50% 100%;`);
+  clipBox.append(video(s.src, `display:block; width:${w}px; height:${h}px; object-fit:cover; border-radius:${CARD.clipRadius}px;`));
+
+  const title = banner(s.title, TITLE_PX, C.bannerGold);
+  let banners;
+  if (wide) {
+    // Stacked over the clip, centered in the sky above it
+    const b = el('div', `left:${STAGE_W / 2}px; top:${top / 2}px; gap:${TAGLINE_GAP * TITLE_PX}px;`);
+    b.className = 'banner';
+    b.append(title, tagline(s.line, TAGLINE_PX, TAGLINE_COLOR, WIDE_W));
+    banners = [b];
+  } else {
+    // Either side of a portrait clip, at its middle height
+    const room = (STAGE_W - boxW) / 2;
+    const side = room / 2;
+    const y = top + boxH * 0.42;
+    const l = el('div', `left:${side}px; top:${y}px;`); l.className = 'banner'; l.append(title);
+    const r = el('div', `left:${STAGE_W - side}px; top:${y}px;`); r.className = 'banner';
+    r.append(tagline(s.line, TAGLINE_PX, TAGLINE_COLOR, room - 2 * SIDE_MARGIN));
+    banners = [l, r];
+  }
+  stage.append(clipBox, ...banners);
+  return { clipBox, banners, top, boxH };
+}
+
+const squashScale = (q) => `scale(${1 + q / 2}, ${1 - q})`;
+function rest(parts) {
+  parts.clipBox.style.transform = '';
+  parts.banners.forEach((b) => (b.style.opacity = '1'));
+}
+
+// The timeline: fall from well above the stage, squash on landing, with the banners washing in after it
+function play(parts) {
+  const from = -(parts.top + parts.boxH) * DROP_LEAD;
+  const t1 = DROP_MS, t2 = t1 + SQUASH_MS;
+  parts.banners.forEach((b) => (b.style.opacity = '0'));
+  const start = performance.now();
+  let landed = 0;
+  sfx('drop');
+  const tick = (now) => {
+    const t = now - start;
+    const box = parts.clipBox.style;
+    if (t < t1) {
+      const u = t / DROP_MS;
+      box.transform = `translateY(${snap(from * (1 - u * u))}px)`;
+    } else if (t < t2) {
+      if (landed < 1) { landed = 1; sfx('land'); }
+      box.transform = squashScale((1 - (t - t1) / SQUASH_MS) * SQUASH);
+    } else box.transform = '';
+    const fade = Math.max(0, Math.min(1, (t - t1) / BANNER_FADE_MS));
+    parts.banners.forEach((b) => (b.style.opacity = String(fade)));
+    if (t < Math.max(t2, t1 + BANNER_FADE_MS)) anim = requestAnimationFrame(tick);
+    else rest(parts);
+  };
+  anim = requestAnimationFrame(tick);
+}
+
+function show(next, entrance) {
+  cancelAnimationFrame(anim);
+  slide = next;
+  const parts = build(SLIDES[slide]);
+  rest(parts);
+  if (entrance && !reduced.matches) play(parts);
+  for (const k of ORDER) document.getElementById(`c-${k}`).setAttribute('aria-pressed', String(k === slide));
+}
+
+// ---- Fit and controls --------------------------------------------------------
+function fit() {
+  const r = frame.getBoundingClientRect();
+  const s = Math.min(r.width / STAGE_W, r.height / STAGE_H);
+  stage.style.transform = `translate(${(r.width - STAGE_W * s) / 2}px, ${(r.height - STAGE_H * s) / 2}px) scale(${s})`;
+}
+new ResizeObserver(fit).observe(frame);
+
+const step = (d) => show(ORDER[(ORDER.indexOf(slide) + d + ORDER.length) % ORDER.length], true);
+const toggleFull = () => {
+  if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  else frame.requestFullscreen?.().catch(() => {});
+};
+
+document.querySelectorAll('[data-c]').forEach((b) => b.addEventListener('click', () => show(b.dataset.c, true)));
+document.getElementById('replay').addEventListener('click', () => show(slide, true));
+document.getElementById('full').addEventListener('click', toggleFull);
+frame.addEventListener('click', () => step(1));
+
+addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input, button') && (e.key === ' ' || e.key === 'Enter')) return;
+  // Clickers send B and . to black the screen; the deck ignores both
+  if (e.key === 'b' || e.key === 'B' || e.key === '.') { e.preventDefault(); return; }
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'PageDown') { e.preventDefault(); step(1); }
+  else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); step(-1); }
+  else if (k === 'r' || k === 'R') show(slide, true);
+  else if (k === 'f' || k === 'F') toggleFull();
+});
+
+show(slide, false);
+fit();
+// Banners are measured from the font, so rebuild once the pixel face arrives
+document.fonts.load("400 27px 'Jersey 15'").then(() => show(slide, false));
+</script>
