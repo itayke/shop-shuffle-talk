@@ -30,3 +30,6 @@ clip CueQuestGameplayVertical2.mov 24.15 10.2 "scale=720:1280:flags=lanczos" 24 
 clip RopeRescue_youtube_480.mp4 11.5 6 "null" 23 deck/clips/rope-rescue.mp4
 # Mushroom 11: four trailer shots (gear, sunset lake, boulder, pillar), starting a frame after the gear shot's cut
 clip Mushroom11_available_now_720.mp4 40.42 10.13 "null" 23 deck/clips/mushroom-11.mp4
+# Venice (working title): a screen recording panning the canal town, ending on a mission dialog; the left edge's black
+# strip cropped off to exact 16:9, halved to 30 fps
+clip Venice_screen_recording_2026-11-06.mov 70 10 "crop=2538:1428:8:0,scale=1280:720:flags=lanczos,fps=30" 23 deck/clips/venice.mp4

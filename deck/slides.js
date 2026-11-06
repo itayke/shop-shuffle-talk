@@ -30,7 +30,7 @@ const DECK = {
         '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
       media: [
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
-        { src: 'clips/mushroom-11.mp4', caption: 'Venice' },
+        { src: 'clips/venice.mp4', caption: 'Venice' },
       ],
       notes: 'The craft thread. One beat each, the clip does the talking.',
       secs: 45,
