@@ -6,8 +6,8 @@ const DECK = {
     {
       kind: 'title',
       section: 'Opening',
-      title: 'Play Means Business',
-      text: 'Games that do a job',
+      title: 'Shop Shuffle',
+      text: 'Play Means Business',
       byline: 'Itay Keren · itay@untame.com',
       logo: 'img/untame-logo-cream.png',
       notes: 'Up while people sit down. The name is a working title.',
@@ -24,9 +24,21 @@ const DECK = {
     //   secs: 45,
     // },
 
-    // ---- Who I am: two quick threads
+    // ---- Who I am: the person, then two quick threads
     {
       section: 'Who I am',
+      title: 'Itay Keren',
+      text: 'Owner, Creative & Technical Lead',
+      sideBullets: [
+        'Award-winning designer & engineer',
+        'Dozens of launched titles through companies, clients, and solo indie studio Untame',
+      ],
+      sideWidth: 'wide',
+      media: ['img/itay-portrait.jpg'],
+      notes: 'Who I am, in one breath; the next slides are the proof.',
+      secs: 15,
+    },
+    {
       title: 'ICQ + AOL',
       text: 'World\'s first Instant Messenger',
       sideBullets: [
