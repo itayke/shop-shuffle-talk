@@ -334,8 +334,8 @@ function cloud(ctx, x, y, big) {
   const w = big ? CLOUD_W.big : CLOUD_W.small;
   ctx.fillStyle = C.cloud;
   ctx.fillRect(x, y + 4, w, 5);
-  ctx.fillRect(x + 4, y + 1, w * 0.45, 4);
-  ctx.fillRect(x + w * 0.4, y - 1, w * 0.35, 6);
+  ctx.fillRect(x + 4, y + 1, Math.round(w * 0.45), 4);
+  ctx.fillRect(x + Math.round(w * 0.4), y - 1, Math.round(w * 0.35), 6);
   ctx.fillStyle = C.cloudShade;
   ctx.fillRect(x, y + 9, w, 2);
 }
@@ -378,24 +378,46 @@ function drawStreet() {
 }
 const street = drawStreet();
 
-// The clouds' own layer over the street, kept across slides so they drift on through every change. They wrap around
-// the stage, move a whole art pixel at a time, and redraw only when one has moved; reduced motion holds them still
+// The clouds' own layer over the street, kept across slides so they drift on through every change. Each cloud is drawn
+// once in art pixels, then stamped at whole screen pixels, so it keeps its blocky look but glides; they wrap around the
+// stage, redraw only when one has moved, and hold still under reduced motion
+const CLOUD_TOP = 1, CLOUD_H = 12; // a cloud's rows reach this far above its y, and span this many in all
+const cloudSprite = (big) => {
+  const w = big ? CLOUD_W.big : CLOUD_W.small, c = document.createElement('canvas');
+  c.width = w; c.height = CLOUD_H;
+  cloud(c.getContext('2d'), 0, CLOUD_TOP, big);
+  return c;
+};
+const CLOUD_SPRITES = { big: cloudSprite(true), small: cloudSprite(false) };
+// Lower clouds draw last, over the ones above them
+const CLOUD_ORDER = CLOUDS.map((c, i) => i).sort((a, b) => CLOUDS[a][1] - CLOUDS[b][1]);
 const sky = document.createElement('canvas');
-sky.width = ART_W; sky.height = ART_H;
 sky.className = 'scene';
 const skyCtx = sky.getContext('2d');
 let cloudKey = '';
+// Matches the sky layer to the screen pixels the stage covers; called by fit()
+function sizeSky(stageScale) {
+  const ratio = window.devicePixelRatio || 1;
+  sky.width = Math.max(1, Math.round(STAGE_W * stageScale * ratio));
+  sky.height = Math.max(1, Math.round(STAGE_H * stageScale * ratio));
+  cloudKey = '';
+}
 function drawClouds(now) {
   const t = reduced.matches ? 0 : now / 1000;
+  const k = sky.width / ART_W; // screen pixels per art pixel
   const xs = CLOUDS.map(([x0, , big], i) => {
     const w = big ? CLOUD_W.big : CLOUD_W.small, span = ART_W + w;
-    return Math.floor((x0 + w + t * CLOUD_SPEED * (1 + i * CLOUD_SPEED_STEP)) % span) - w;
+    return Math.round((((x0 + w + t * CLOUD_SPEED * (1 + i * CLOUD_SPEED_STEP)) % span) - w) * k);
   });
-  const key = xs.join();
+  const key = `${sky.width}:${xs.join()}`;
   if (key !== cloudKey) {
     cloudKey = key;
-    skyCtx.clearRect(0, 0, ART_W, ART_H);
-    CLOUDS.forEach(([, y, big], i) => cloud(skyCtx, xs[i], y, big));
+    skyCtx.clearRect(0, 0, sky.width, sky.height);
+    skyCtx.imageSmoothingEnabled = false;
+    for (const i of CLOUD_ORDER) {
+      const [, y, big] = CLOUDS[i], img = big ? CLOUD_SPRITES.big : CLOUD_SPRITES.small;
+      skyCtx.drawImage(img, xs[i], Math.round((y - CLOUD_TOP) * k), Math.round(img.width * k), Math.round(CLOUD_H * k));
+    }
   }
   requestAnimationFrame(drawClouds);
 }
@@ -906,6 +928,7 @@ function fit() {
   const r = frame.getBoundingClientRect();
   const s = Math.min(r.width / STAGE_W, r.height / STAGE_H);
   stage.style.transform = `translate(${(r.width - STAGE_W * s) / 2}px, ${(r.height - STAGE_H * s) / 2}px) scale(${s})`;
+  sizeSky(s);
 }
 new ResizeObserver(fit).observe(frame);
 

@@ -28,9 +28,9 @@ const DECK = {
     {
       section: 'Who I am',
       title: 'Itay Keren',
-      text: 'Owner, Creative & Technical Lead',
+      text: 'Award-winning designer & engineer',
       sideBullets: [
-        'Award-winning designer & engineer',
+        'Owner & Creative Lead of **Untame**, independent studio from Valatie, NY',
         'Dozens of launched titles through companies, clients, and solo indie studio Untame',
       ],
       sideWidth: 'wide',
@@ -65,6 +65,7 @@ const DECK = {
     },
     {
       title: 'Original Games',
+      text: 'Selected Launch Titles',
       topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
@@ -78,27 +79,17 @@ const DECK = {
     },
     {
       title: 'Public Speaking',
+      // text: 'Focus on education, user experience (UX), art, and tech',
       topBullets: [
         '4× GDC speaker (twice Best-in-Show)',
         'TGDF Taipei 2016, NYU Practice 2016, Unite 2013 & 2014',
-        'Focus on education, user experience (UX), art, and tech'
+        '**Focus on education, user experience (UX), art, and tech**'
       ],
       media: [
         { src: 'img/gdc17-ux-summit.jpg', caption: 'GDC 2017' },
       ],
       notes: 'Scaffold: pictures to come. The craft thread, shared back with other developers.',
       secs: 20,
-    },
-    {
-      title: 'Work in progress',
-      topBullets: ['**Cue Quest** mini-golf + billiard love child',
-        '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
-      media: [
-        { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
-        { src: 'clips/venice.mp4', caption: 'Venice' },
-      ],
-      notes: 'The craft thread. One beat each, the clip does the talking.',
-      secs: 45,
     },
 
     // ---- Games that did a job, in themed pairs
@@ -128,13 +119,25 @@ const DECK = {
     },
     {
       title: 'Learning',
-      text: 'Games that change behavior',
+      text: 'Games can change behavior',
       color: 'green',
       media: [
         { todo: 'IntelliGym', caption: 'IntelliGym' },
-        { todo: 'DOJO / OfficeSpace (to confirm)', caption: 'DOJO' },
+        // { todo: 'DOJO / OfficeSpace (to confirm)', caption: 'DOJO' },
       ],
       notes: 'Learning and behavior. DOJO / OfficeSpace is still to confirm.',
+      secs: 40,
+    },
+    {
+      title: 'Social Change',
+      text: 'Games can make a difference',
+      sideBullets: [
+        'A nonprofit helping Black youth turn ideas into startups',
+        'Games that teach young founders business thinking',
+      ],
+      // sideWidth: 'wide',
+      color: 'blue',
+      media: [ 'img/formation.jpg' ],
       secs: 40,
     },
     {
@@ -147,6 +150,26 @@ const DECK = {
       ],
       notes: 'Place and community. Formation Ventures is highly relevant to this room.',
       secs: 40,
+    },
+
+    // ---- What's next: current work, then the asks to the room
+    {
+      section: "What's next",
+      title: 'Work in progress',
+      topBullets: ['**Cue Quest** mini-golf + billiard love child',
+        '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
+      media: [
+        { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
+        { src: 'clips/venice.mp4', caption: 'Venice' },
+      ],
+      notes: 'What I am building now. One beat each, the clip does the talking.',
+      secs: 45,
+    },
+    {
+      title: 'Community asks',
+      text: 'Ways to work together',
+      notes: 'Scaffold: the asks to the room are still to write.',
+      secs: 30,
     },
 
     // ---- The handoff
