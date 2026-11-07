@@ -2,15 +2,27 @@
 // Draft content from BRIEF.md's draft structure: the words are placeholders until the story's flavor is set.
 const DECK = {
   slides: [
-    // ---- Why games
+    // ---- Opening
     {
-      section: 'Why games',
-      title: 'Christmas Lights',
-      text: 'A game on my front porch',
-      media: [{ todo: 'Christmas Lights shmup on the 64×8 LED strip, played by passers-by' }],
-      notes: 'Open on the clip, not on a statement. The one claim is still to write.',
-      secs: 45,
+      kind: 'title',
+      section: 'Opening',
+      title: 'Play Means Business',
+      text: 'Games that do a job',
+      byline: 'Itay Keren · itay@untame.com',
+      logo: 'img/untame-logo-cream.png',
+      notes: 'Up while people sit down. The name is a working title.',
+      secs: 10,
     },
+
+    // Out of the flow for now (not a pitch for clients); kept for questions
+    // {
+    //   section: 'Why games',
+    //   title: 'Christmas Lights',
+    //   text: 'A game on my front porch',
+    //   media: [{ todo: 'Christmas Lights shmup on the 64×8 LED strip, played by passers-by' }],
+    //   notes: 'Open on the clip, not on a statement. The one claim is still to write.',
+    //   secs: 45,
+    // },
 
     // ---- Who I am: two quick threads
     {

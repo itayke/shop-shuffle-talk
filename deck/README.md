@@ -54,6 +54,11 @@ A slide without bullets picks one of these by itself, the one that gives the med
 - **Side**: the title and text in a column left of the media. Chosen when that makes the media clearly larger (a portrait clip).
 - **Flank**: a side layout that puts the title left of the media and the text right of it, if the title fits.
 - **No media**: the words are centered in the sky with a larger title (the "Grab your phone" slide).
+- **Title**: `kind: 'title'` makes the talk's cover: the title and text larger still, centered in the sky, with a `byline` in the small pixel face at the road's left and a `logo` image at its right. Nothing drops; the words fade in. It shows no media.
+
+```js
+{ kind: 'title', title: 'Play Means Business', text: 'Games that do a job', byline: 'Itay Keren · itay@untame.com', logo: 'img/untame-logo.png' }
+```
 
 Text that doesn't fit drops to the next smaller type size.
 

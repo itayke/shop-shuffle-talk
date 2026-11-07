@@ -143,6 +143,9 @@ const CARD_RADIUS = CARD.clipRadius + CARD_INSET;
 // Cards for media still to come, or a file that didn't load
 const PLACEHOLDER = { bg: '#1c1a26', label: '#f5c746', text: '#d0d7e0', font: 24, pad: 32 };
 const CAPTION = { color: '#dccfb5', font: 24 };
+// A title slide's byline (in the small pixel face, like the captions) and logo, on the road; the logo sits a little above
+// the road's middle, where it looks level with the byline
+const COVER = { byline: 24, logoH: 44, logoLift: 2 };
 
 // Layout, in stage pixels: margins, gaps, and the size limits for media
 const MARGIN_X = 96, MARGIN_TOP = 64;
@@ -161,8 +164,8 @@ const DEFAULT_ASPECT = 16 / 9;
 
 // Type, in screen pixels per font pixel. When a slide's text doesn't fit, the next set is tried
 const TYPE_STEPS = [
-  { title: 4, hero: 6, text: 3, bullet: 2 },
-  { title: 3, hero: 5, text: 2, bullet: 2 },
+  { title: 4, hero: 6, cover: 8, text: 3, coverText: 5, bullet: 2 },
+  { title: 3, hero: 5, cover: 7, text: 2, coverText: 4, bullet: 2 },
 ];
 // Spacing in font pixels of the element below the gap: title to text, before the bullets, between bullets
 // Bullets sit further apart than a wrapped bullet's own lines, so each still reads as one item
@@ -211,9 +214,10 @@ const STAMP_SFX = 'shutDown';
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
-const SLIDE_KEYS = ['section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const SLIDE_KEYS = ['kind', 'byline', 'logo', 'section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel', 'stamps'];
 const LAYOUTS = ['stack', 'side', 'flank'];
+const KINDS = ['title'];
 
 // ---- Elements and state ------------------------------------------------------
 const $ = (id) => document.getElementById(id);
@@ -258,6 +262,8 @@ function readDeck() {
       else if (!SLIDE_KEYS.includes(k)) s.warnings.push(`Unknown field "${k}"`);
     }
     if (s.layout && !LAYOUTS.includes(s.layout)) s.warnings.push(`Unknown layout "${s.layout}"`);
+    if (s.kind && !KINDS.includes(s.kind)) s.warnings.push(`Unknown kind "${s.kind}": use ${KINDS.join(', ')}, or leave it out`);
+    if (s.kind !== 'title' && (s.byline || s.logo)) s.warnings.push('"byline" and "logo" show only on a slide with kind: \'title\'');
     if (s.color && !TITLE_COLORS[s.color]) s.warnings.push(`Unknown color "${s.color}"`);
     section = s.section || section;
     s.section = section;
@@ -586,10 +592,38 @@ function firstFit(make) {
   return p;
 }
 
+// A title slide: its words at cover size, centered in the sky. The byline and logo go on the road (see roadLine)
+const TITLE_NO_MEDIA = 'A title slide shows no media: its media is left out';
+function coverBlock(s, type) {
+  return textBlock({ ...s, bullets: [] }, { ...type, hero: type.cover, text: type.coverText }, STAGE_W - 2 * MARGIN_X, 'center', true);
+}
+
+// A title slide's road: the byline at the left margin, the logo at the right, each centered in the road's height
+function roadLine(s) {
+  const out = [];
+  const lane = (side) => `position:absolute; ${side}:${MARGIN_X}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center;`;
+  if (s.byline) out.push(el('div', `${lane('left')} font:400 ${COVER.byline}px/1 var(--font-pixel); color:${CAPTION.color}; white-space:nowrap;`, s.byline));
+  if (s.logo) {
+    const box = el('div', lane('right'));
+    const img = el('img', `display:block; height:${COVER.logoH}px; width:auto; margin-bottom:${2 * COVER.logoLift}px;`);
+    img.src = s.logo; img.alt = '';
+    box.append(img); out.push(box);
+  }
+  stage.append(...out);
+  return out;
+}
+
 // Bullets go where the slide puts them. A slide without bullets takes the layout that gives the media the most room (leaning to
 // text above) unless it names one, and a column there becomes a flank: the media centered, the title on its left and the text on
 // its right, if both fit
 function plan(s) {
+  if (s.kind === 'title') {
+    if (s.media.length && !s.warnings.includes(TITLE_NO_MEDIA)) s.warnings.push(TITLE_NO_MEDIA);
+    return firstFit((type) => {
+      const block = coverBlock(s, type);
+      return { mode: 'center', block, ok: block.fits && block.h <= STREET_Y - 2 * MARGIN_TOP };
+    });
+  }
   if (!s.media.length) {
     const p = firstFit((type) => {
       const block = textBlock(s, type, STAGE_W - 2 * MARGIN_X, 'center', true);
@@ -658,7 +692,8 @@ function build(s, p) {
   let rows = [];
   if (p.mode === 'center') {
     stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
-    return { cards, fades: [p.block.el], rows: p.block.rows, caps, stamps };
+    const road = s.kind === 'title' ? roadLine(s) : [];
+    return { cards, fades: [p.block.el, ...road], rows: p.block.rows, caps, stamps };
   }
   const { row } = p;
   const rowTop = STREET_Y - row.rowH;
