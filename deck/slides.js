@@ -96,25 +96,25 @@ const DECK = {
     {
       section: 'Games with a job',
       title: 'Learning',
-      text: 'Games can change behavior, explicitly or implicitly',
+      text: 'Games can change behavior without players noticing',
       color: 'green',
       media: [
         { src: 'clips/intelligym.mp4', caption: 'IntelliGym Hockey' },
       ],
       sideBullets: [
-        'A space-battle game used by USA Hockey',
+        'A space-battle game used by USA Hockey\'s national team',
         'Builds game sense without their on-ice habits getting in the way',
+        'Co-designed with a leading cognitive scientist to improve hockey-sense',
       ],
-      notes: 'Learning and behavior. DOJO',
       secs: 40,
     },
     {
       title: 'Train',
-      text: 'Games can enforce practice and prepare for high challenge skills',
+      text: 'Games make high-stakes practice safe',
       sideBullets: [
         'Virtual Reality GI Experience',
-        'Train physicians by modeling high-risk Gastrointenstinal conditions',
-        '2 weeks of Solo work for a healthcare conference booth',
+        'Train physicians by modeling high-risk Gastrointestinal conditions',
+        '2 weeks of solo work for a healthcare conference booth',
         'Acquired for $2M by a major pharma company'],
       // sideWidth: 'narrow',
       media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · LEVEL EX' }],
