@@ -202,7 +202,7 @@ const BULLET_IN_MS = 300, BULLET_STAGGER_MS = 120, BULLET_RISE = 10;
 // A card's caption comes in as the card lands, fading in as it rises from this many stage pixels lower
 const CAPTION_IN_MS = 300, CAPTION_SINK = 10;
 const REVEAL_SFX = 'step';
-// Stamps (award laurels) slam onto a card's top-right corner once it settles, or one per click on a reveal slide. Each is a
+// Stamps (award laurels) slam onto a card's top-right corner once it settles. Each is a
 // share of the card's width, capped, with an inset from the media's edges; it starts this many times larger and tilted,
 // overshoots below full size at the impact point (a share of its time), then settles
 const STAMP_SHARE = 0.15, STAMP_MAX_W = 150, STAMP_INSET = 20, STAMP_GAP = 16;
@@ -216,7 +216,12 @@ const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
 const SLIDE_KEYS = ['kind', 'byline', 'logo', 'section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel', 'stamps'];
+const DECK_KEYS = ['slides', 'reveal'];
 const LAYOUTS = ['stack', 'side', 'flank'];
+// How a slide's bullets and media come in: all at once (false), one item per click (serial: media, then top bullets, then
+// side bullets), or one of each per click (parallel: the first media, top bullet and side bullet together, and so on).
+// The first step shows on arrival. `true` means serial
+const REVEALS = ['serial', 'parallel'];
 const KINDS = ['title'];
 
 // ---- Elements and state ------------------------------------------------------
@@ -224,7 +229,7 @@ const $ = (id) => document.getElementById(id);
 const stage = $('stage'), frame = $('frame'), soundBox = $('sound');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let slides = [];
-let cur = 0, revealed = 0, parts = null, anim = 0, ready = false, timers = [];
+let cur = 0, revealed = 0, parts = null, playGen = 0, ready = false, timers = [];
 
 const sfx = (id) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id); } catch (e) {} };
 const unlock = () => { try { window.ShopSfx && ShopSfx.unlock(); } catch (e) {} };
@@ -254,6 +259,15 @@ function readDeck() {
     warnings.push('slides.js did not load or has no slides list. Check the browser console for a syntax error.');
     return { slides: [], warnings };
   }
+  for (const k of Object.keys(deck)) if (!DECK_KEYS.includes(k)) warnings.push(`Unknown deck field "${k}"`);
+  const revealMode = (v, warn) => {
+    if (v === true) return 'serial';
+    if (v == null || v === false) return false;
+    if (REVEALS.includes(v)) return v;
+    warn.push(`Unknown reveal "${v}": use ${REVEALS.join(', ')}, true or false`);
+    return false;
+  };
+  const deckReveal = revealMode(deck.reveal, warnings);
   let section = '';
   const list = deck.slides.map((raw, i) => {
     const s = { ...raw, n: i + 1, warnings: [] };
@@ -281,7 +295,7 @@ function readDeck() {
       item.stamps = [].concat(item.stamps ?? []);
       return item;
     });
-    s.stampCount = s.media.reduce((n, m) => n + m.stamps.length, 0);
+    s.reveal = 'reveal' in raw ? revealMode(raw.reveal, s.warnings) : deckReveal;
     return s;
   });
   return { slides: list, warnings };
@@ -710,12 +724,12 @@ function placeTop(p, rowTop, fades) {
 // Lays the planned slide onto the street: cards stand on the sidewalk, words float in the sky, captions sit on the road
 function build(s, p) {
   stage.replaceChildren(street, sky);
-  const cards = [], fades = [], caps = [], stamps = [];
+  const cards = [], fades = [];
   let rows = [];
   if (p.mode === 'center') {
     stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
     const road = s.kind === 'title' ? roadLine(s) : [];
-    return { cards, fades: [p.block.el, ...road], rows: p.block.rows, caps, stamps };
+    return { cards, fades: [p.block.el, ...road], rows: p.block.rows };
   }
   const { row } = p;
   const rowTop = STREET_Y - row.rowH;
@@ -746,21 +760,21 @@ function build(s, p) {
     const boxW = w + 2 * CARD_INSET;
     const card = el('div', `position:absolute; left:${Math.round(x)}px; top:${rowTop}px; width:${boxW}px; height:${row.rowH}px; padding:${CARD.pad}px; background:${CARD.bg}; border:${CARD.border}px solid ${CARD.line}; border-radius:${CARD_RADIUS}px; transform-origin:50% 100%;`);
     card.append(mediaEl(item, w, row.h));
-    if (item.stamps.length) stamps.push(...stampRow(card, item.stamps, w, cards.length));
+    const c = { el: card, top: rowTop, h: row.rowH, cap: null, stamps: item.stamps.length ? stampRow(card, item.stamps, w) : [] };
     stage.append(card);
-    cards.push({ el: card, top: rowTop, h: row.rowH });
+    cards.push(c);
     if (item.caption) {
-      const cap = el('div', `position:absolute; left:${Math.round(x)}px; width:${boxW}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center; justify-content:center; text-align:center; font:400 ${CAPTION.font}px/1 var(--font-pixel); color:${CAPTION.color}; text-transform:uppercase; white-space:nowrap;`, item.caption);
-      stage.append(cap); caps.push({ el: cap, i: cards.length - 1 });
+      const cap = c.cap = el('div', `position:absolute; left:${Math.round(x)}px; width:${boxW}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center; justify-content:center; text-align:center; font:400 ${CAPTION.font}px/1 var(--font-pixel); color:${CAPTION.color}; text-transform:uppercase; white-space:nowrap;`, item.caption);
+      stage.append(cap);
     }
     x += boxW + MEDIA_GAP;
   });
-  return { cards, fades, rows, caps, stamps };
+  return { cards, fades, rows };
 }
 
 // A card's stamps in a row in the top-right corner of its media, shrinking to fit when the card is narrow. Inside the
 // card, so they squash with it
-function stampRow(card, srcs, mediaW, cardIndex) {
+function stampRow(card, srcs, mediaW) {
   const n = srcs.length;
   const fit = (mediaW - 2 * STAMP_INSET - STAMP_GAP * (n - 1)) / n;
   const w = Math.floor(Math.min(STAMP_MAX_W, mediaW * STAMP_SHARE, fit));
@@ -769,7 +783,7 @@ function stampRow(card, srcs, mediaW, cardIndex) {
     const img = el('img', `display:block; width:${w}px; height:auto; filter:${STAMP_SHADOW};`);
     img.src = src; img.alt = '';
     row.append(img);
-    return { el: img, card: cardIndex };
+    return img;
   });
   card.append(row);
   return out;
@@ -777,10 +791,6 @@ function stampRow(card, srcs, mediaW, cardIndex) {
 
 // ---- Motion ------------------------------------------------------------------
 const squashScale = (q) => `scale(${1 + q / 2}, ${1 - q})`;
-function rest(pt) {
-  pt.cards.forEach((c) => (c.el.style.transform = ''));
-  pt.fades.forEach((f) => (f.style.opacity = '1'));
-}
 
 // An element's entrance: it fades in as it settles from dy stage pixels away (negative is above), after a delay; until it
 // starts, it stays hidden at its starting point
@@ -792,10 +802,9 @@ function settleIn(node, delay, dy, ms) {
 }
 const bulletIn = (row, delay) => settleIn(row, delay, -BULLET_RISE, BULLET_IN_MS);
 // A stamp slams down from large and tilted, overshooting a little before it settles, with a thud on impact
-function stampIn(stamp, delay) {
+function stampIn(img, delay) {
   timers.push(setTimeout(() => sfx(STAMP_SFX), delay + STAMP_MS * STAMP_HIT));
-  if (reduced.matches) return;
-  stamp.el.animate(
+  img.animate(
     [
       { opacity: 0, transform: `scale(${STAMP_FROM}) rotate(${STAMP_TILT}deg)`, easing: 'ease-in' },
       { opacity: 1, transform: `scale(${STAMP_UNDER})`, offset: STAMP_HIT, easing: 'ease-out' },
@@ -805,23 +814,26 @@ function stampIn(stamp, delay) {
   );
 }
 
-// Each card falls from well above the stage and squashes on landing, one after another, its caption rising in as it lands;
-// the words wash in after the last, and the bullets follow one by one
-function play(pt) {
-  const n = pt.cards.length;
+// Plays one step in: its cards fall from well above the stage and squash on landing, one after another, each caption rising
+// in as its card lands and its stamps slamming on once all have settled; then the words wash in (only `fades`, on arrival)
+// and the step's bullets follow one by one. A step without cards is just its bullets, with a click sound
+function play(step, fades) {
+  const { cards, rows } = step, n = cards.length;
+  const gen = playGen;
   const lastLand = n ? DROP_MS + (n - 1) * STAGGER_MS : 0;
-  pt.caps.forEach((c) => settleIn(c.el, DROP_MS + c.i * STAGGER_MS, CAPTION_SINK, CAPTION_IN_MS));
-  pt.rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
-  // Stamps wait for every card to settle; on a reveal slide they come by click instead
-  if (!slides[cur].reveal) pt.stamps.forEach((st, i) => stampIn(st, lastLand + SQUASH_MS + STAMP_DELAY_MS + i * STAMP_STAGGER_MS));
-  const end = lastLand + Math.max(n ? SQUASH_MS : 0, TEXT_FADE_MS);
+  cards.forEach((c, i) => c.cap && settleIn(c.cap, DROP_MS + i * STAGGER_MS, CAPTION_SINK, CAPTION_IN_MS));
+  rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
+  cards.flatMap((c) => c.stamps).forEach((img, i) => stampIn(img, lastLand + SQUASH_MS + STAMP_DELAY_MS + i * STAMP_STAGGER_MS));
+  if (n) sfx('drop'); else if (rows.length && !fades.length) sfx(REVEAL_SFX);
+  if (!n && !fades.length) return;
+  const end = lastLand + Math.max(n ? SQUASH_MS : 0, fades.length ? TEXT_FADE_MS : 0);
   const landed = new Set();
-  pt.fades.forEach((f) => (f.style.opacity = '0'));
-  if (n) sfx('drop');
+  fades.forEach((f) => (f.style.opacity = '0'));
   const start = performance.now();
   const tick = (now) => {
+    if (gen !== playGen) return;
     const T = now - start;
-    pt.cards.forEach((c, i) => {
+    cards.forEach((c, i) => {
       const t = T - i * STAGGER_MS;
       const from = -(c.top + c.h) * DROP_LEAD;
       if (t < DROP_MS) { const u = Math.max(0, t) / DROP_MS; c.el.style.transform = `translateY(${snap(from * (1 - u * u))}px)`; }
@@ -832,32 +844,45 @@ function play(pt) {
       } else c.el.style.transform = '';
     });
     const fade = String(Math.max(0, Math.min(1, (T - lastLand) / TEXT_FADE_MS)));
-    pt.fades.forEach((f) => (f.style.opacity = fade));
-    if (T < end) anim = requestAnimationFrame(tick); else rest(pt);
+    fades.forEach((f) => (f.style.opacity = fade));
+    if (T < end) requestAnimationFrame(tick);
+    else { cards.forEach((c) => (c.el.style.transform = '')); fades.forEach((f) => (f.style.opacity = '1')); }
   };
-  anim = requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
 }
 
 // ---- Showing and stepping ----------------------------------------------------
-// A reveal slide's steps: its bullets, then its stamps
-const revealable = (s) => (s.reveal ? s.bullets.length + s.stampCount : 0);
+// A slide's steps, each a set of cards and bullet rows. Without reveal it is one step holding everything
+function stepsOf(s, pt) {
+  const topN = s.topBullets.length;
+  const tops = pt.rows.slice(0, topN), sides = pt.rows.slice(topN);
+  let steps;
+  if (s.reveal === 'serial') steps = [...pt.cards.map((c) => ({ cards: [c], rows: [] })), ...[...tops, ...sides].map((r) => ({ cards: [], rows: [r] }))];
+  else if (s.reveal === 'parallel') {
+    const n = Math.max(pt.cards.length, tops.length, sides.length);
+    steps = Array.from({ length: n }, (_, i) => ({ cards: pt.cards.slice(i, i + 1), rows: [tops[i], sides[i]].filter(Boolean) }));
+  } else steps = [{ cards: pt.cards, rows: pt.rows }];
+  return steps.length ? steps : [{ cards: [], rows: [] }];
+}
 function applyReveal() {
-  const s = slides[cur], seen = (i) => (!s.reveal || i < revealed ? 'visible' : 'hidden');
-  parts.rows.forEach((r, i) => (r.style.visibility = seen(i)));
-  parts.stamps.forEach((st, i) => (st.el.style.visibility = seen(parts.rows.length + i)));
+  parts.steps.forEach((st, i) => {
+    const v = i < revealed ? 'visible' : 'hidden';
+    st.rows.forEach((r) => (r.style.visibility = v));
+    st.cards.forEach((c) => { c.el.style.visibility = v; if (c.cap) c.cap.style.visibility = v; });
+  });
 }
 
-// Shows slide i; `shown` is how many reveal steps start visible
-function show(i, { animate = false, shown = 0 } = {}) {
+// Shows slide i with its first `shown` steps (at least the first)
+function show(i, { animate = false, shown = 1 } = {}) {
   if (!slides.length) return;
-  cancelAnimationFrame(anim);
+  playGen++;
   timers.forEach(clearTimeout); timers = [];
   cur = Math.max(0, Math.min(slides.length - 1, i));
-  revealed = Math.min(shown, revealable(slides[cur]));
   parts = build(slides[cur], plan(slides[cur]));
-  rest(parts);
+  parts.steps = stepsOf(slides[cur], parts);
+  revealed = Math.max(1, Math.min(shown, parts.steps.length));
   applyReveal();
-  if (animate && !reduced.matches) play(parts);
+  if (animate && !reduced.matches) play(parts.steps[0], parts.fades);
   // The slide number in the URL, so a reload comes back to it; some embeds refuse this
   try { history.replaceState(null, '', `#${cur + 1}`); } catch (e) {}
   updateChrome();
@@ -865,11 +890,10 @@ function show(i, { animate = false, shown = 0 } = {}) {
 
 function next() {
   if (!ready) return;
-  if (revealed < revealable(slides[cur])) {
-    const k = revealed++;
+  if (revealed < parts.steps.length) {
+    const step = parts.steps[revealed++];
     applyReveal(); updateChrome();
-    if (k < parts.rows.length) { sfx(REVEAL_SFX); if (!reduced.matches) bulletIn(parts.rows[k], 0); }
-    else stampIn(parts.stamps[k - parts.rows.length], 0);
+    if (!reduced.matches) play(step, []); else if (step.rows.length) sfx(REVEAL_SFX);
     return;
   }
   if (cur < slides.length - 1) show(cur + 1, { animate: true });
@@ -912,8 +936,8 @@ function buildOutline() {
 
 function updateChrome() {
   const s = slides[cur];
-  const steps = revealable(s);
-  $('counter').textContent = `${cur + 1} / ${slides.length}${steps ? ` · step ${revealed} / ${steps}` : ''}`;
+  const steps = s.reveal ? parts.steps.length : 0;
+  $('counter').textContent = `${cur + 1} / ${slides.length}${steps > 1 ? ` · step ${revealed} / ${steps}` : ''}`;
   $('notes-title').textContent = `${cur + 1}. ${label(s)}`;
   $('notes').textContent = s.notes || '';
   const nx = slides[cur + 1];

@@ -15,7 +15,7 @@
   sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
                                    // in either list, **double asterisks** make words bold
   sideWidth: 'wide',               // how wide the side column may grow: narrow, normal (default), wide, or a share like 0.45
-  reveal: true,                    // bullets appear one per click, the top ones first, then any stamps
+  reveal: 'parallel',              // bullets and media come in per click: serial, parallel or false (see Reveal)
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
   layout: 'stack',                 // only to override the automatic choice: stack, side or flank
@@ -25,6 +25,16 @@
 ```
 
 Every field is optional. A misspelled field shows as a warning in the notes panel.
+
+## Reveal
+
+By default a slide comes in all at once: the media drops, the words wash in, the bullets follow. `reveal` makes it step in, one click per step, with the first step shown on arrival; the title and text are there from the start.
+
+- **`serial`** (or `true`): one item per click: each media item, then the top bullets, then the side bullets.
+- **`parallel`**: one of each per click: the first media item, top bullet and side bullet together, then the second of each, and so on. Keep the lists in matching order.
+- **`false`**: all at once, the default.
+
+A media item drops onto the street when its step comes, with its caption, and its stamps land after it. Going back shows the previous slide with every step in. Set `reveal` beside `slides` in `slides.js` to make it the default for the deck; a slide's own `reveal` overrides it.
 
 ## Media
 
@@ -40,7 +50,7 @@ media: [
 ]
 ```
 
-`stamps` are images (award laurels, say) that slam onto the top-right corner of a card's media once every card has landed, one after another with a thud. Several stand in a row, shrinking to fit a narrow card. On a `reveal` slide they come one per click instead, after the bullets.
+`stamps` are images (award laurels, say) that slam onto the top-right corner of a card's media once every card has landed, one after another with a thud. Several stand in a row, shrinking to fit a narrow card. On a `reveal` slide they land with their card's step.
 
 `aspect` (`'16:9'`, `'9:16'` or a number) sets a card's shape. A file's own shape is used when it has none; a `todo` defaults to 16:9. A file that doesn't load shows as a MISSING FILE card. Videos play muted and looping. Cut them with `../clips.sh` into `clips/`.
 
@@ -64,4 +74,4 @@ Text that doesn't fit drops to the next smaller type size.
 
 ## Keys
 
-Right or Page Down: next bullet or slide. Left or Page Up: previous slide. Home and End: first and last slide. R: replay the drop. F: full screen. B and `.` (clickers' black-screen keys) do nothing. Clicking the stage also steps forward, and the flow list jumps to any slide. The URL keeps the slide number (`index.html#4`).
+Right or Page Down: next step or slide. Left or Page Up: previous slide. Home and End: first and last slide. R: replay the drop. F: full screen. B and `.` (clickers' black-screen keys) do nothing. Clicking the stage also steps forward, and the flow list jumps to any slide. The URL keeps the slide number (`index.html#4`).

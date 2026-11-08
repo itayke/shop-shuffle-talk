@@ -65,6 +65,7 @@ const DECK = {
     },
     {
       title: 'Original Games',
+      reveal: 'parallel',
       text: 'Selected Launch Titles',
       topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
@@ -156,6 +157,7 @@ const DECK = {
     {
       section: "What's next",
       title: 'Work in progress',
+      reveal: 'parallel',
       topBullets: ['**Cue Quest** mini-golf + billiard love child',
         '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
       media: [
