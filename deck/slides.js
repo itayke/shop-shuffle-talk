@@ -102,7 +102,8 @@ const DECK = {
         { src: 'clips/intelligym.mp4', caption: 'IntelliGym Hockey' },
       ],
       sideBullets: [
-        'With a simple space-battle metaphor, real-life hockey players implicitly develop new relevant cognitive skills by suspending their predispositions',
+        'A space-battle game used by USA Hockey',
+        'Builds game sense without their on-ice habits getting in the way',
       ],
       notes: 'Learning and behavior. DOJO',
       secs: 40,
