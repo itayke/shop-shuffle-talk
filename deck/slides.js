@@ -95,16 +95,29 @@ const DECK = {
 
     {
       section: 'Games with a job',
+      title: 'Learning',
+      text: 'Games can change behavior, explicitly or implicitly',
+      color: 'green',
+      media: [
+        { src: 'clips/intelligym.mp4', caption: 'IntelliGym Hockey' },
+      ],
+      sideBullets: [
+        'With a simple space-battle metaphor, real-life hockey players implicitly develop new relevant cognitive skills by suspending their predispositions',
+      ],
+      notes: 'Learning and behavior. DOJO',
+      secs: 40,
+    },
+    {
       title: 'Train',
       text: 'Games can enforce practice and prepare for high challenge skills',
       sideBullets: [
         'Virtual Reality GI Experience',
-        'Made for a healthcare conference booth',
-        '2 weeks of solo work',
+        'Train physicians by modeling high-risk Gastrointenstinal conditions',
+        '2 weeks of Solo work for a healthcare conference booth',
         'Acquired for $2M by a major pharma company'],
-      sideWidth: 'narrow',
-      media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR' }],
-      notes: 'Health, part one: it trains the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
+      // sideWidth: 'narrow',
+      media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · LEVEL EX' }],
+      notes: 'train the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
       secs: 40,
     },
     {
@@ -117,17 +130,6 @@ const DECK = {
       media: ['img/spiropod.jpg'],
       notes: 'Health, part two. Patented, and known to this audience.',
       secs: 60,
-    },
-    {
-      title: 'Learning',
-      text: 'Games can change behavior',
-      color: 'green',
-      media: [
-        { todo: 'IntelliGym', caption: 'IntelliGym' },
-        // { todo: 'DOJO / OfficeSpace (to confirm)', caption: 'DOJO' },
-      ],
-      notes: 'Learning and behavior. DOJO / OfficeSpace is still to confirm.',
-      secs: 40,
     },
     {
       title: 'Social Change',

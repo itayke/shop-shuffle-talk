@@ -33,3 +33,6 @@ clip Mushroom11_available_now_720.mp4 40.42 10.13 "null" 23 deck/clips/mushroom-
 # Venice (working title): a screen recording panning the canal town, ending on a mission dialog; the left edge's black
 # strip cropped off to exact 16:9, halved to 30 fps
 clip Venice_screen_recording_2026-11-06.mov 70 10 "crop=2538:1428:8:0,scale=1280:720:flags=lanczos,fps=30" 23 deck/clips/venice.mp4
+# IntelliGym (hockey): a "Drive to the Net" drill from the faceoff, through the scrum, to the goal and its flash, ending
+# before the score banner; the game's 4:3 panel cropped from the padded 16:9 frame
+clip IntelliGym_hockey_training_1080.mp4 3.5 7 "crop=1440:1080:239:0,scale=960:720:flags=lanczos" 23 deck/clips/intelligym.mp4
