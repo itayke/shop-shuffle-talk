@@ -93,17 +93,17 @@ const DECK = {
       secs: 20,
     },
 
-    // ---- Games that did a job, in themed pairs
     {
       section: 'Games with a job',
-      title: 'Gastro VR',
-      text: 'Virtual Reality GI Experience',
+      title: 'Train',
+      text: 'Games can enforce practice and prepare for high challenge skills',
       sideBullets: [
+        'Virtual Reality GI Experience',
         'Made for a healthcare conference booth',
         '2 weeks of solo work',
         'Acquired for $2M by a major pharma company'],
       sideWidth: 'narrow',
-      media: ['clips/gastro-vr.mp4'],
+      media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR' }],
       notes: 'Health, part one: it trains the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
       secs: 40,
     },

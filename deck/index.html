@@ -449,18 +449,26 @@ function titleArt(text, px, color) {
   return { el: c, w: parseFloat(c.style.width), h: parseFloat(c.style.height) };
 }
 
-// Greedy word wrap to a width; a newline in the text forces a break
+// Balanced word wrap to a width: as few lines as greedy wrapping needs, at the narrowest width that still holds them, so
+// the lines come out near equal (4 + 4 words rather than 7 + 1). A newline in the text forces a break
 function wrap(ctx, text, maxW) {
-  const out = [];
-  for (const para of String(text).split('\n')) {
+  const greedy = (para, w) => {
+    const out = [];
     let line = '';
     for (const word of para.split(' ')) {
       const next = line ? `${line} ${word}` : word;
-      if (line && ctx.measureText(next).width > maxW) { out.push(line); line = word; } else line = next;
+      if (line && ctx.measureText(next).width > w) { out.push(line); line = word; } else line = next;
     }
     out.push(line);
-  }
-  return out;
+    return out;
+  };
+  return String(text).split('\n').flatMap((para) => {
+    const lines = greedy(para, maxW);
+    if (lines.length < 2) return lines;
+    let lo = 0, hi = Math.ceil(maxW);
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (greedy(para, mid).length > lines.length) lo = mid; else hi = mid; }
+    return greedy(para, hi);
+  });
 }
 
 // Text in the lobby tagline's style: hard-edged Jersey 15 without an outline, wrapped to a width
