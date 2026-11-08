@@ -67,7 +67,8 @@ const DECK = {
       title: 'Original Games',
       reveal: 'parallel',
       text: 'Selected Launch Titles',
-      topBullets: ['**Rope Rescue** (2011) Top 10 on the App Store', '**Mushroom 11** (2017) Multi award-winning, 4.8★, $1M+ revenue'],
+      topBullets: ['**Rope Rescue.** Top 10 on the App Store',
+        '**Mushroom 11.** Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
         { src: 'clips/rope-rescue.mp4', caption: 'Rope Rescue' },
         {
@@ -95,7 +96,7 @@ const DECK = {
 
     {
       section: 'Games with a job',
-      title: 'Learning',
+      title: 'Teach',
       text: 'Games can change behavior without players noticing',
       color: 'green',
       media: [
@@ -122,6 +123,20 @@ const DECK = {
       secs: 40,
     },
     {
+      title: 'Empower',
+      text: 'Games can level the playing field',
+      sideBullets: [
+        'A nonprofit helping Black youth turn ideas into startups',
+        'Built games to foster business thinking for young founders',
+        'Measurably improved creative problem-solving (DAT scores - Divergent Association Task)',
+      ],
+      sideWidth: 'wide',
+      color: 'blue',
+      media: [ 'img/formation.jpg' ],
+      notes: 'Formation Ventures is highly relevant to this room. DAT is the Divergent Association Task, a standard creativity test.',
+      secs: 40,
+    },
+    {
       title: 'Spiropod',
       text: 'Mental Wellness & Entertainment',
       sideBullets: ['A handheld game console operated by breath',
@@ -133,18 +148,6 @@ const DECK = {
       secs: 60,
     },
     {
-      title: 'Social Change',
-      text: 'Games can make a difference',
-      sideBullets: [
-        'A nonprofit helping Black youth turn ideas into startups',
-        'Games that teach young founders business thinking',
-      ],
-      // sideWidth: 'wide',
-      color: 'blue',
-      media: [ 'img/formation.jpg' ],
-      secs: 40,
-    },
-    {
       title: 'Place',
       text: 'Games tied to a real place',
       color: 'blue',
@@ -152,7 +155,7 @@ const DECK = {
         { todo: 'Chinatown AR exhibit, Museum of Santa Cruz', caption: 'Chinatown' },
         { todo: 'Formation Ventures', caption: 'Formation Ventures' },
       ],
-      notes: 'Place and community. Formation Ventures is highly relevant to this room.',
+      notes: 'Place and community.',
       secs: 40,
     },
 
@@ -161,8 +164,8 @@ const DECK = {
       section: "What's next",
       title: 'Work in progress',
       reveal: 'parallel',
-      topBullets: ['**Cue Quest** mini-golf + billiard love child',
-        '**Venice** (Working Title) Mafia courier in a procedurally generated canal town'],
+      topBullets: ['**Cue Quest.** mini-golf + billiard love child',
+        '**Venice.** (Working Title) Mafia courier in a procedurally generated canal town'],
       media: [
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
         { src: 'clips/venice.mp4', caption: 'Venice' },
