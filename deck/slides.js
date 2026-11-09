@@ -53,9 +53,9 @@ const DECK = {
       secs: 20,
     },
     {
-      title: 'Original Games',
+      title: 'Selected Original Titles',
       reveal: 'parallel',
-      text: 'Selected Launch Titles',
+      // text: 'Selected Launch Titles',
       topBullets: ['**Rope Rescue.** Top 10 on the App Store',
         '**Mushroom 11.** Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
@@ -89,7 +89,6 @@ const DECK = {
       text: 'Play that does real work',
       secs: 10,
     },
-
 
     {
       title: 'Teach',
@@ -169,22 +168,15 @@ const DECK = {
       notes: 'A game can move people through a real place: a park, a street, your shop. For questions: iOS and Android apps and a GM console, with GPS, NFC and BLE.',
       secs: 40,
     },
-    // Out of the flow for now: Connect carries the real-places point; kept for questions
-    // {
-    //   title: 'Place',
-    //   text: 'Games tied to a real place',
-    //   color: 'blue',
-    //   media: [
-    //     { todo: 'Chinatown AR exhibit, Museum of Santa Cruz', caption: 'Chinatown' },
-    //     { todo: 'Formation Ventures', caption: 'Formation Ventures' },
-    //   ],
-    //   notes: 'Place and community.',
-    //   secs: 40,
-    // },
 
-    // ---- What's next: what I am building now, then the asks to the room
     {
       section: "What's next",
+      title: "What's next",
+      text: 'Many more client and original\nprojects in the works',
+      secs: 10,
+    },
+
+    {
       title: 'Spiropod',
       text: 'Mental Wellness & Entertainment',
       sideBullets: ['A handheld game console operated by breath',
@@ -193,34 +185,45 @@ const DECK = {
         'Patent pending, working on scaling and securing capital'],
       media: ['img/spiropod.jpg'],
       notes: 'What I am building now: a game for health, my own venture. Known to this audience.',
-      secs: 60,
+      secs: 40,
     },
     {
-      title: 'Work in progress',
+      title: 'Upcoming Titles',
       reveal: 'parallel',
       topBullets: ['**Cue Quest.** mini-golf + billiard love child',
-        '**Venice.** (Working Title) Mafia courier in a procedurally generated canal town'],
+        '**Venice.** Mafia courier in a procedurally generated canal town (Working Title)'],
       media: [
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
         { src: 'clips/venice.mp4', caption: 'Venice' },
       ],
       notes: 'What I am building now. One beat each, the clip does the talking.',
-      secs: 45,
+      secs: 60,
     },
     {
       title: 'Community asks',
       text: 'Ways to work together',
-      notes: 'Scaffold: the asks to the room are still to write.',
+      footer: 'Itay Keren · itay@untame.com',
+      logo: 'img/untame-logo-cream.png',
       secs: 30,
     },
 
     // ---- The handoff
     {
-      section: 'Grab your phone',
+      section: 'Handoff',
       title: 'Grab your phone',
-      text: 'One person, four days',
-      notes: 'Say only the four days; the lines and prompts are for questions. Then switch to the game tab: the lobby is the last slide, and the Untame pitch is said over it.',
+      text: "Let's see how well it works on you",
+      footer: 'Itay Keren · itay@untame.com',
+      logo: 'img/untame-logo-cream.png',
+      notes: 'Every game so far had a job. Intel had a product to show off; you have a business. Grab your phone. Then switch to the game tab: the lobby is the last slide, and the Untame pitch is said over it while shops walk in. After the round: one person, four days.',
       secs: 15,
+    },
+
+    {
+      title: 'Thank you',
+      text: "Let's connect!",
+      footer: 'Itay Keren · itay@untame.com',
+      logo: 'img/untame-logo-cream.png',
+      secs: 10,
     },
   ],
 };
