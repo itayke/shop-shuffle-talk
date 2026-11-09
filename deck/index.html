@@ -2,8 +2,13 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <!-- The game's shop icon, its gold front turned banner green to tell the deck's tab from the game's -->
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Press+Start+2P&family=Work+Sans:wght@400;500;600;700&display=swap">
 <style>
+/* Fonts ship beside the page (Latin subsets from Google Fonts, OFL), so the deck plays offline */
+@font-face { font-family: 'Jersey 15'; font-weight: 400; font-display: swap; src: url(fonts/jersey-15.woff2) format('woff2'); }
+@font-face { font-family: 'Press Start 2P'; font-weight: 400; font-display: swap; src: url(fonts/press-start-2p.woff2) format('woff2'); }
+/* Work Sans is one variable file covering every weight the deck uses */
+@font-face { font-family: 'Work Sans'; font-weight: 100 900; font-display: swap; src: url(fonts/work-sans.woff2) format('woff2'); }
+
 /* The page is chrome around one 16:9 stage: the stage is always the game's daytime street, the chrome follows the theme */
 :root {
   --bg: #e7ebf0;

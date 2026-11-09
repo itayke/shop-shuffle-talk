@@ -4,6 +4,8 @@
 
 `slides.js` is a JavaScript object rather than YAML or JSON because the deck must play from disk (`file://`), where browsers won't let a page read a separate data file. It reads like JSON, but it allows comments and trailing commas, and its keys and strings need no quotes beyond the usual ones.
 
+The deck needs no network: its fonts (Jersey 15, Press Start 2P, Work Sans) are in `fonts/` with their OFL licenses, and every image and clip is local.
+
 ## A slide
 
 ```js
