@@ -12,9 +12,9 @@
   title: 'VR Gastro',              // the gold banner (one line)
   text: 'Sold for $2M',            // the line under it, in the tagline's style; wraps
   topBullets: ['One', 'Two'],      // a list under the text, above the media
-  sideBullets: ['Three'],          // a list in a column left of the media; use either list, both or neither
+  bullets: ['Three'],              // a list in a column left of the media; use either list, both or neither
                                    // in either list, **double asterisks** make words bold
-  sideWidth: 'wide',               // how wide the side column may grow: narrow, normal (default), wide, or a share like 0.45
+  bulletWidth: 'wide',             // how wide the bullet column may grow: narrow, normal (default), wide, or a share like 0.45
   reveal: 'parallel',              // bullets and media come in per click: serial, parallel or false (see Reveal)
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
@@ -31,8 +31,8 @@ Every field is optional. A misspelled field shows as a warning in the notes pane
 
 By default a slide comes in all at once: the media drops, the words wash in, the bullets follow. `reveal` makes it step in, one click per step, with the first step shown on arrival; the title and text are there from the start.
 
-- **`serial`** (or `true`): one item per click: each media item, then the top bullets, then the side bullets.
-- **`parallel`**: one of each per click: the first media item, top bullet and side bullet together, then the second of each, and so on. Keep the lists in matching order.
+- **`serial`** (or `true`): one item per click: each media item, then the top bullets, then `bullets`.
+- **`parallel`**: one of each per click: the first media item, top bullet and bullet together, then the second of each, and so on. Keep the lists in matching order.
 - **`false`**: all at once, the default.
 
 A media item drops onto the street when its step comes, with its caption, and its stamps land after it. Going back shows the previous slide with every step in. Set `reveal` beside `slides` in `slides.js` to make it the default for the deck; a slide's own `reveal` overrides it.
@@ -57,7 +57,7 @@ media: [
 
 ## Layouts
 
-Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `sideBullets` stand in a column left of the media, centered on it, and the media stands on the sidewalk. The column is only as wide as its longest line, up to `sideWidth` (a share of the stage's width between its margins); past that, lines wrap. A wider limit keeps lines whole and shrinks the media to make room. If the side bullets leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
+Bullets go where the slide puts them. The title and text sit at the same height on every slide with media, `topBullets` center in the sky between them and the media, `bullets` stand in a column left of the media, centered on it, and the media stands on the sidewalk. The column is only as wide as its longest line, up to `bulletWidth` (a share of the stage's width between its margins); past that, lines wrap. A wider limit keeps lines whole and shrinks the media to make room. If they leave the media too small, the notes panel says so. A slide with no media centers all its bullets under the text.
 
 A slide without bullets picks one of these by itself, the one that gives the media the most room; `layout` names one instead (it applies only to slides without bullets):
 

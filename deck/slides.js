@@ -16,11 +16,11 @@ const DECK = {
       section: 'Who I am',
       title: 'Itay Keren',
       text: 'Award-winning designer & engineer',
-      sideBullets: [
+      bullets: [
         'Owner & Creative Lead of **Untame**, independent studio from Valatie, NY',
         'Dozens of launched titles through companies, clients, and solo indie studio Untame',
       ],
-      sideWidth: 'wide',
+      bulletWidth: 'wide',
       media: ['img/portfolio-grid.jpg'],
       footer: 'Itay Keren · itay@untame.com',
       logo: 'img/untame-logo-cream.png',
@@ -30,12 +30,12 @@ const DECK = {
     {
       title: 'ICQ + AOL',
       text: 'World\'s first Instant Messenger',
-      sideBullets: [
+      bullets: [
         'Founding member, ICQ# 30,000',
         'Lead server engineer, 100M+ users',
         'Acquired and integrated into AOL',
       ],
-      sideWidth: 'wide',
+      bulletWidth: 'wide',
       media: ['img/icq.png'],
       notes: 'The tech thread: people together, in real time.',
       secs: 30,
@@ -43,12 +43,12 @@ const DECK = {
     {
       title: 'Oberon Media',
       text: 'Casual Games Service and Studio',
-      sideBullets: [
+      bullets: [
         'Multiplayer white-label service',
         'Ran a games studio of a dozen devs & artists',
         '30+ multiplayer casual games',
       ],
-      sideWidth: 'wide',
+      bulletWidth: 'wide',
       media: [{ src: 'img/oberon-pool.png', caption: '8-Ball Pool' }],
       secs: 20,
     },
@@ -97,7 +97,7 @@ const DECK = {
       media: [
         { src: 'clips/intelligym.mp4', caption: 'IntelliGym Hockey' },
       ],
-      sideBullets: [
+      bullets: [
         'A space-battle game used by USA Hockey\'s national team',
         'Builds game sense without their on-ice habits getting in the way',
         'Co-designed with a leading cognitive scientist to improve hockey-sense',
@@ -107,7 +107,7 @@ const DECK = {
     {
       title: 'Promote',
       text: 'Games make the product the hero',
-      sideBullets: [
+      bullets: [
         '**Terra.** For Intel\'s touchscreen laptop launch',
         'Touch to sculpt an island, then mow it from the keyboard',
         'Both sides of a 2-in-1 laptop, demoed hands-on',
@@ -119,12 +119,12 @@ const DECK = {
     {
       title: 'Train',
       text: 'Games make high-stakes practice safe',
-      sideBullets: [
+      bullets: [
         'Virtual Reality GI Experience',
         'Train physicians by modeling high-risk Gastrointestinal conditions',
         'Drew crowds to Level Ex\'s booth at medical conferences',
         'Acquired for $2M by a major pharma company'],
-      // sideWidth: 'narrow',
+      // bulletWidth: 'narrow',
       media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · LEVEL EX' }],
       notes: 'Train the doctor, and draw the crowd: Level Ex used it to reach customers at expos. Two weeks of solo work. The $2M is for the investors in the room.',
       secs: 40,
@@ -132,12 +132,12 @@ const DECK = {
     {
       title: 'Empower',
       text: 'Games can level the playing field',
-      sideBullets: [
+      bullets: [
         'A nonprofit helping Black youth turn ideas into startups',
         'Built games to foster business thinking for young founders',
         'Measurably improved creative problem-solving (DAT scores - Divergent Association Task)',
       ],
-      sideWidth: 'wide',
+      bulletWidth: 'wide',
       color: 'blue',
       media: [ 'img/formation.jpg' ],
       notes: 'Formation Ventures is highly relevant to this room. DAT is the Divergent Association Task, a standard creativity test.',
@@ -146,7 +146,7 @@ const DECK = {
     {
       title: 'Engage',
       text: 'Games make serious tools playful',
-      sideBullets: [
+      bullets: [
         '**DOJO.** Office space planning as a puzzle',
         'Drag departments onto floors, or let Auto Stack solve it',
         'Live scores show how well each plan works',
@@ -159,7 +159,7 @@ const DECK = {
     {
       title: 'Connect',
       text: 'Games bring people together in real places',
-      sideBullets: [
+      bullets: [
         '**The Forge.** A large outdoor team game, in development',
         'Factions claim real territory by tapping hidden tags with their phones',
         'Built for hundreds of players across 100+ acres',
@@ -177,9 +177,9 @@ const DECK = {
     },
 
     {
-      title: 'Spiropod',
+      title: 'spiropod',
       text: 'Mental Wellness & Entertainment',
-      sideBullets: ['A handheld game console operated by breath',
+      bullets: ['A handheld game console operated by breath',
         'Aimed at reducing anxiety and other breath related issues',
         'Guidance, Motivation, Distraction',
         'Patent pending, working on scaling and securing capital'],
@@ -202,7 +202,7 @@ const DECK = {
     {
       title: 'Community asks',
       text: 'Ways to work together',
-      sideBullets: [
+      bullets: [
         '**Clients.** Got a job a game could do? Let\'s build it',
         '**Backers.** Funding for spiropod and original titles',
         '**Troy & Capital Region.** Make this place a hub for outdoor games',

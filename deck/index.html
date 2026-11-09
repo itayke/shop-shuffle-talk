@@ -151,7 +151,7 @@ const FOOTER = { font: 24, logoH: 44, logoLift: 2 };
 const MARGIN_X = 96, MARGIN_TOP = 64;
 const BLOCK_GAP = 56, MEDIA_GAP = 40;
 const MEDIA_MAX_H = 784, MEDIA_MIN_H = 280;
-// The widest the text column beside media grows, as a share of the width between the margins. A slide's `sideWidth` names
+// The widest the text column beside media grows, as a share of the width between the margins. A slide's `bulletWidth` names
 // a share by word or gives a number, kept within the range; the media takes the rest
 const SIDE_WIDTHS = { narrow: 0.28, normal: 0.37, wide: 0.5 }, SIDE_WIDTH_RANGE = [0.15, 0.75];
 // Flanking text keeps this far off the card and the stage edge
@@ -214,7 +214,9 @@ const STAMP_SFX = 'shutDown';
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
-const SLIDE_KEYS = ['kind', 'footer', 'logo', 'section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const SLIDE_KEYS = ['kind', 'footer', 'logo', 'section', 'title', 'text', 'topBullets', 'bullets', 'bulletWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+// Old field names, each with its new one
+const RENAMED_KEYS = { sideBullets: 'bullets', sideWidth: 'bulletWidth' };
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel', 'stamps'];
 const DECK_KEYS = ['slides', 'reveal'];
 const LAYOUTS = ['stack', 'side', 'flank'];
@@ -237,16 +239,16 @@ addEventListener('pointerdown', unlock, { once: true });
 addEventListener('keydown', unlock, { once: true });
 
 // ---- Reading the flow ------------------------------------------------------
-// The side column's widest, in stage pixels, from a slide's `sideWidth`: a word from SIDE_WIDTHS or a share of the width
-function sideWidth(v, warnings) {
+// The side column's widest, in stage pixels, from a slide's `bulletWidth`: a word from SIDE_WIDTHS or a share of the width
+function bulletWidth(v, warnings) {
   const [lo, hi] = SIDE_WIDTH_RANGE;
   let share = SIDE_WIDTHS.normal;
   if (typeof v === 'number' && Number.isFinite(v)) {
     share = Math.min(hi, Math.max(lo, v));
-    if (share !== v) warnings.push(`"sideWidth" ${v} is outside ${lo}–${hi}, so ${share} is used`);
+    if (share !== v) warnings.push(`"bulletWidth" ${v} is outside ${lo}–${hi}, so ${share} is used`);
   } else if (v != null) {
     if (SIDE_WIDTHS[v]) share = SIDE_WIDTHS[v];
-    else warnings.push(`Unknown sideWidth "${v}": use ${Object.keys(SIDE_WIDTHS).join(', ')}, or a number like 0.45`);
+    else warnings.push(`Unknown bulletWidth "${v}": use ${Object.keys(SIDE_WIDTHS).join(', ')}, or a number like 0.45`);
   }
   return Math.round(share * (STAGE_W - 2 * MARGIN_X));
 }
@@ -272,7 +274,7 @@ function readDeck() {
   const list = deck.slides.map((raw, i) => {
     const s = { ...raw, n: i + 1, warnings: [] };
     for (const k of Object.keys(raw)) {
-      if (k === 'bullets') s.warnings.push('"bullets" is now "topBullets" (above the media) or "sideBullets" (beside it)');
+      if (RENAMED_KEYS[k]) s.warnings.push(`"${k}" is now "${RENAMED_KEYS[k]}"`);
       else if (!SLIDE_KEYS.includes(k) && k !== 'byline') s.warnings.push(`Unknown field "${k}"`);
     }
     if (s.layout && !LAYOUTS.includes(s.layout)) s.warnings.push(`Unknown layout "${s.layout}"`);
@@ -283,11 +285,12 @@ function readDeck() {
     s.section = section;
     const arr = (v) => (v == null ? [] : [].concat(v));
     s.topBullets = arr(raw.topBullets);
-    s.sideBullets = arr(raw.sideBullets);
+    // `bullets` stand beside the media, so they're the side list here
+    s.sideBullets = arr(raw.bullets);
     // Every bullet in reveal order: the top ones, then the side ones
     s.bullets = [...s.topBullets, ...s.sideBullets];
     if (s.layout && s.bullets.length) s.warnings.push('"layout" applies only to slides without bullets');
-    s.sideW = sideWidth(raw.sideWidth, s.warnings);
+    s.sideW = bulletWidth(raw.bulletWidth, s.warnings);
     s.media = (s.media == null ? [] : [].concat(s.media)).map((m) => {
       const item = typeof m === 'string' ? { src: m } : { ...m };
       for (const k of Object.keys(item)) if (!MEDIA_KEYS.includes(k)) s.warnings.push(`Unknown media field "${k}"`);
@@ -679,7 +682,7 @@ function plan(s) {
   const aspects = s.media.map(aspectOf);
   if (s.sideBullets.length) {
     const p = firstFit((t) => planSide(s, t, aspects));
-    const tight = 'The side bullets leave the media too small: shorten them, or move some to topBullets';
+    const tight = 'The bullets leave the media too small: shorten them, or move some to topBullets';
     if (!p.ok && !s.warnings.includes(tight)) s.warnings.push(tight);
     return p;
   }
