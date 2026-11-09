@@ -137,6 +137,19 @@ const DECK = {
       secs: 40,
     },
     {
+      title: 'Engage',
+      text: 'Games make serious tools playful',
+      sideBullets: [
+        '**DOJO.** Office space planning as a puzzle',
+        'Drag departments onto floors, or let Auto Stack solve it',
+        'Live scores show how well each plan works',
+        'Acquired by OfficeSpace for its planner and solver',
+      ],
+      media: [{ src: 'img/dojo-stack.png', caption: 'DOJO' }],
+      notes: 'Say it: the playful part is what they paid for.',
+      secs: 40,
+    },
+    {
       title: 'Spiropod',
       text: 'Mental Wellness & Entertainment',
       sideBullets: ['A handheld game console operated by breath',
