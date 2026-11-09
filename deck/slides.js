@@ -1,5 +1,4 @@
 // The talk's flow: one entry per slide, in show order. The deck places everything itself; README.md lists every field.
-// Draft content from BRIEF.md's draft structure: the words are placeholders until the story's flavor is set.
 const DECK = {
   slides: [
     {
@@ -17,8 +16,8 @@ const DECK = {
       title: 'Itay Keren',
       text: 'Award-winning designer & engineer',
       bullets: [
-        'Owner & Creative Lead of **Untame**, independent studio from Valatie, NY',
-        'Dozens of launched titles through companies, clients, and solo indie studio Untame',
+        'Owner and Creative Lead of **Untame**, an independent studio in Valatie, NY',
+        'Dozens of titles shipped with companies, clients and Untame',
       ],
       bulletWidth: 'wide',
       media: ['img/portfolio-grid.jpg'],
@@ -29,9 +28,9 @@ const DECK = {
     },
     {
       title: 'ICQ + AOL',
-      text: 'World\'s first Instant Messenger',
+      text: 'World\'s first instant messenger',
       bullets: [
-        'Founding member, ICQ# 30,000',
+        'Founding member, ICQ #30,000',
         'Lead server engineer, 100M+ users',
         'Acquired and integrated into AOL',
       ],
@@ -42,10 +41,10 @@ const DECK = {
     },
     {
       title: 'Oberon Media',
-      text: 'Casual Games Service and Studio',
+      text: 'Casual games service & studio',
       bullets: [
         'Multiplayer white-label service',
-        'Ran a games studio of a dozen devs & artists',
+        'Ran a games studio of a dozen devs and artists',
         '30+ multiplayer casual games',
       ],
       bulletWidth: 'wide',
@@ -55,7 +54,6 @@ const DECK = {
     {
       title: 'Selected Original Titles',
       reveal: 'parallel',
-      // text: 'Selected Launch Titles',
       topBullets: ['**Rope Rescue.** Top 10 on the App Store',
         '**Mushroom 11.** Multi award-winning, 4.8★, $1M+ revenue'],
       media: [
@@ -70,16 +68,15 @@ const DECK = {
     },
     {
       title: 'Public Speaking',
-      // text: 'Focus on education, user experience (UX), art, and tech',
       topBullets: [
-        '4× GDC speaker (twice Best-in-Show)',
-        'TGDF Taipei 2016, NYU Practice 2016, Unite 2013 & 2014',
-        '**Focus on education, user experience (UX), art, and tech**'
+        '4× GDC speaker (twice Best in Show)',
+        'TGDF Taipei 2016, NYU Practice 2016, Unite 2013 and 2014',
+        '**Focus on education, user experience (UX), art, and tech**',
       ],
       media: [
         { src: 'img/gdc17-ux-summit.jpg', caption: 'GDC 2017' },
       ],
-      notes: 'Scaffold: pictures to come. The craft thread, shared back with other developers.',
+      notes: 'The craft thread, shared back with other developers.',
       secs: 20,
     },
 
@@ -121,11 +118,10 @@ const DECK = {
       text: 'Games make high-stakes practice safe',
       bullets: [
         'Virtual Reality GI Experience',
-        'Train physicians by modeling high-risk Gastrointestinal conditions',
+        'Train physicians by modeling high-risk gastrointestinal conditions',
         'Drew crowds to Level Ex\'s booth at medical conferences',
         'Acquired for $2M by a major pharma company'],
-      // bulletWidth: 'narrow',
-      media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · LEVEL EX' }],
+      media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · Level Ex' }],
       notes: 'Train the doctor, and draw the crowd: Level Ex used it to reach customers at expos. Two weeks of solo work. The $2M is for the investors in the room.',
       secs: 40,
     },
@@ -135,11 +131,11 @@ const DECK = {
       bullets: [
         'A nonprofit helping Black youth turn ideas into startups',
         'Built games to foster business thinking for young founders',
-        'Measurably improved creative problem-solving (DAT scores - Divergent Association Task)',
+        'Measurably improved creative problem-solving (DAT, the Divergent Association Task)',
       ],
       bulletWidth: 'wide',
       color: 'blue',
-      media: [ 'img/formation.jpg' ],
+      media: ['img/formation.jpg'],
       notes: 'Formation Ventures is highly relevant to this room. DAT is the Divergent Association Task, a standard creativity test.',
       secs: 40,
     },
@@ -178,10 +174,10 @@ const DECK = {
 
     {
       title: 'spiropod',
-      text: 'Mental Wellness & Entertainment',
-      bullets: ['A handheld game console operated by breath',
-        'Aimed at reducing anxiety and other breath related issues',
-        'Guidance, Motivation, Distraction',
+      text: 'Mental wellness & entertainment',
+      bullets: ['Games designed to be played with your breath',
+        'Aimed at reducing anxiety by playfully modeling box-breathing',
+        '**Guidance, Motivation, Distraction**',
         'Patent pending, working on scaling and securing capital'],
       media: ['img/spiropod.jpg'],
       notes: 'What I am building now: a game for health, my own venture. Known to this audience.',
@@ -190,8 +186,8 @@ const DECK = {
     {
       title: 'Upcoming Titles',
       reveal: 'parallel',
-      topBullets: ['**Cue Quest.** mini-golf + billiard love child',
-        '**Venice.** Mafia courier in a procedurally generated canal town (Working Title)'],
+      topBullets: ['**Cue Quest.** Mini-golf + billiards love child',
+        '**Venice.** Mafia courier in a procedurally generated canal town (working title)'],
       media: [
         { src: 'clips/cue-quest.mp4', caption: 'Cue Quest' },
         { src: 'clips/venice.mp4', caption: 'Venice' },
@@ -200,24 +196,24 @@ const DECK = {
       secs: 60,
     },
     {
-      title: 'Community asks',
-      text: 'Ways to work together',
+      title: "Let's talk",
+      text: 'How can we work together?',
       bullets: [
         '**Clients.** Got a job a game could do? Let\'s build it',
         '**Backers.** Funding for spiropod and original titles',
-        '**Troy & Capital Region.** Make this place a hub for outdoor games',
+        '**Troy & the Capital Region.** Make this place a hub for community and outdoor games',
       ],
-      media: ['clips/porch-lights.mp4'],
-      notes: 'Troy last, it leads into the game. This one started on my porch: passers-by stopped to play. Imagine that on every block.',
-      footer: 'Itay Keren · itay@untame.com',
-      logo: 'img/untame-logo-cream.png',
+      media: [{ src: 'clips/porch-lights.mp4', caption: "Playable X-MAS light show" }],
+      notes: 'Troy last: it leads into the game. I already light up my porch for the street. Imagine that on every block.',
+      // footer: 'Itay Keren · itay@untame.com',
+      // logo: 'img/untame-logo-cream.png',
       secs: 30,
     },
 
     // ---- The handoff
     {
       section: 'Handoff',
-      title: 'Grab your phone',
+      title: 'Grab your phones',
       text: "Let's see how well it works on you",
       footer: 'Itay Keren · itay@untame.com',
       logo: 'img/untame-logo-cream.png',
