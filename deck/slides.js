@@ -202,6 +202,13 @@ const DECK = {
     {
       title: 'Community asks',
       text: 'Ways to work together',
+      sideBullets: [
+        '**Clients.** Got a job a game could do? Let\'s build it',
+        '**Backers.** Funding for spiropod and original titles',
+        '**Troy & Capital Region.** Make this place a hub for outdoor games',
+      ],
+      media: ['clips/porch-lights.mp4'],
+      notes: 'Troy last, it leads into the game. This one started on my porch: passers-by stopped to play. Imagine that on every block.',
       footer: 'Itay Keren · itay@untame.com',
       logo: 'img/untame-logo-cream.png',
       secs: 30,

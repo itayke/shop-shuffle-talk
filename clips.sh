@@ -39,3 +39,5 @@ clip IntelliGym_hockey_training_1080.mp4 3.5 7 "crop=1440:1080:239:0,scale=960:7
 # Terra (Hide & Seek for Intel's touchscreen Ultrabook): hands sculpt hills on the laptop's screen, then the cut to
 # full-screen mowing, ending before the interview; from the making-of video
 clip Terra_youtube_nBoVowZNeDM_1080.mp4 101.5 11.2 "scale=1280:720:flags=lanczos" 23 deck/clips/terra.mp4
+# Christmas Lights: the porch LED show at night, the whole recording; cropped to 16:9 below the upstairs window
+clip PXL_20231118_022708530.TS.mp4 0 14.7 "crop=1520:855:140:225,scale=1280:720:flags=lanczos" 23 deck/clips/porch-lights.mp4

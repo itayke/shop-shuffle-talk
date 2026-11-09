@@ -53,7 +53,7 @@ About 6 minutes of talk. The list was cut to fit; side projects that don't serve
    - Games (craft): Rope Rescue, Mushroom 11, Cue Quest.
    - Tech (people together in real time, built fast): ICQ → Oberon → Human Is → AI, ending on 15× throughput with Claude Code. AI is the latest chapter of the tech thread, not a beat of its own.
 3. **Games that did a job** (~2:30), in themed pairs:
-   - Health: VR Gastro (trains the doctor) → Spiropod (for the patient; patented, and known to this audience).
+   - Health: VR Gastro (trains the doctor) → Spiropod (for the patient; patent pending, and known to this audience).
    - Learning and behavior: IntelliGym, DOJO/OfficeSpace (to confirm).
    - Place and community: Chinatown (Museum of Santa Cruz AR exhibit), Formation Ventures.
 4. **Grab your phone** (~0:15): "one person, four days" (Shop Shuffle took 4 days, about 10k lines and about 400 prompts; say only the days, and keep the rest for questions). Then switch to the lobby; the Untame pitch is said over it.
