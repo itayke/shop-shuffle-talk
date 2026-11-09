@@ -143,9 +143,9 @@ const CARD_RADIUS = CARD.clipRadius + CARD_INSET;
 // Cards for media still to come, or a file that didn't load
 const PLACEHOLDER = { bg: '#1c1a26', label: '#f5c746', text: '#d0d7e0', font: 24, pad: 32 };
 const CAPTION = { color: '#dccfb5', font: 24 };
-// A title slide's byline (in the small pixel face, like the captions) and logo, on the road; the logo sits a little above
-// the road's middle, where it looks level with the byline
-const COVER = { byline: 24, logoH: 44, logoLift: 2 };
+// A slide's footer (in the small pixel face, like the captions) and logo, on the road; the logo sits a little above the
+// road's middle, where it looks level with the footer
+const FOOTER = { font: 24, logoH: 44, logoLift: 2 };
 
 // Layout, in stage pixels: margins, gaps, and the size limits for media
 const MARGIN_X = 96, MARGIN_TOP = 64;
@@ -214,7 +214,7 @@ const STAMP_SFX = 'shutDown';
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
 const VIDEO_RE = /\.(mp4|webm|mov|m4v)$/i;
-const SLIDE_KEYS = ['kind', 'byline', 'logo', 'section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
+const SLIDE_KEYS = ['kind', 'footer', 'logo', 'section', 'title', 'text', 'topBullets', 'sideBullets', 'sideWidth', 'reveal', 'media', 'notes', 'secs', 'color', 'layout'];
 const MEDIA_KEYS = ['src', 'todo', 'aspect', 'caption', 'pixel', 'stamps'];
 const DECK_KEYS = ['slides', 'reveal'];
 const LAYOUTS = ['stack', 'side', 'flank'];
@@ -273,11 +273,11 @@ function readDeck() {
     const s = { ...raw, n: i + 1, warnings: [] };
     for (const k of Object.keys(raw)) {
       if (k === 'bullets') s.warnings.push('"bullets" is now "topBullets" (above the media) or "sideBullets" (beside it)');
-      else if (!SLIDE_KEYS.includes(k)) s.warnings.push(`Unknown field "${k}"`);
+      else if (!SLIDE_KEYS.includes(k) && k !== 'byline') s.warnings.push(`Unknown field "${k}"`);
     }
     if (s.layout && !LAYOUTS.includes(s.layout)) s.warnings.push(`Unknown layout "${s.layout}"`);
     if (s.kind && !KINDS.includes(s.kind)) s.warnings.push(`Unknown kind "${s.kind}": use ${KINDS.join(', ')}, or leave it out`);
-    if (s.kind !== 'title' && (s.byline || s.logo)) s.warnings.push('"byline" and "logo" show only on a slide with kind: \'title\'');
+    if ('byline' in raw) s.warnings.push('"byline" is now "footer"');
     if (s.color && !TITLE_COLORS[s.color]) s.warnings.push(`Unknown color "${s.color}"`);
     section = s.section || section;
     s.section = section;
@@ -636,24 +636,25 @@ function firstFit(make) {
   return p;
 }
 
-// A title slide: its words at cover size, centered in the sky. The byline and logo go on the road (see roadLine)
+// A title slide: its words at cover size, centered in the sky
 const TITLE_NO_MEDIA = 'A title slide shows no media: its media is left out';
 function coverBlock(s, type) {
   return textBlock({ ...s, bullets: [] }, { ...type, hero: type.cover, text: type.coverText }, STAGE_W - 2 * MARGIN_X, 'center', true);
 }
 
-// A title slide's road: the byline at the left margin, the logo at the right, each centered in the road's height
+// A slide's road: its footer at the left margin, its logo at the right, each centered in the road's height. Captions share
+// the road, centered under their cards
 function roadLine(s) {
   const out = [];
   const lane = (side) => `position:absolute; ${side}:${MARGIN_X}px; top:${ROAD_Y}px; height:${STAGE_H - ROAD_Y}px; display:flex; align-items:center;`;
-  if (s.byline) out.push(el('div', `${lane('left')} font:400 ${COVER.byline}px/1 var(--font-pixel); color:${CAPTION.color}; white-space:nowrap;`, s.byline));
+  if (s.footer) out.push({ key: 'footer', el: el('div', `${lane('left')} font:400 ${FOOTER.font}px/1 var(--font-pixel); color:${CAPTION.color}; white-space:nowrap;`, s.footer) });
   if (s.logo) {
     const box = el('div', lane('right'));
-    const img = el('img', `display:block; height:${COVER.logoH}px; width:auto; margin-bottom:${2 * COVER.logoLift}px;`);
+    const img = el('img', `display:block; height:${FOOTER.logoH}px; width:auto; margin-bottom:${2 * FOOTER.logoLift}px;`);
     img.src = s.logo; img.alt = '';
-    box.append(img); out.push(box);
+    box.append(img); out.push({ key: 'logo', el: box });
   }
-  stage.append(...out);
+  stage.append(...out.map((r) => r.el));
   return out;
 }
 
@@ -736,8 +737,7 @@ function build(s, p) {
   let rows = [];
   if (p.mode === 'center') {
     stage.append(place(p.block.el, (STAGE_W - p.block.w) / 2, (STREET_Y - p.block.h) / 2));
-    const road = s.kind === 'title' ? roadLine(s) : [];
-    return { cards, fades: [p.block.el, ...road], rows: p.block.rows };
+    return { cards, fades: [p.block.el], rows: p.block.rows, road: roadLine(s) };
   }
   const { row } = p;
   const rowTop = STREET_Y - row.rowH;
@@ -777,7 +777,7 @@ function build(s, p) {
     }
     x += boxW + MEDIA_GAP;
   });
-  return { cards, fades, rows };
+  return { cards, fades, rows, road: roadLine(s) };
 }
 
 // A card's stamps in a row in the top-right corner of its media, shrinking to fit when the card is narrow. Inside the
@@ -885,12 +885,15 @@ function show(i, { animate = false, shown = 1 } = {}) {
   if (!slides.length) return;
   playGen++;
   timers.forEach(clearTimeout); timers = [];
+  const prev = slides[cur];
   cur = Math.max(0, Math.min(slides.length - 1, i));
   parts = build(slides[cur], plan(slides[cur]));
   parts.steps = stepsOf(slides[cur], parts);
   revealed = Math.max(1, Math.min(shown, parts.steps.length));
   applyReveal();
-  if (animate && !reduced.matches) play(parts.steps[0], parts.fades);
+  // A footer or logo the last slide also had stays put rather than fading in again (a replay fades it anyway)
+  const kept = (r) => prev && prev !== slides[cur] && prev[r.key] === slides[cur][r.key];
+  if (animate && !reduced.matches) play(parts.steps[0], [...parts.fades, ...parts.road.filter((r) => !kept(r)).map((r) => r.el)]);
   // The slide number in the URL, so a reload comes back to it; some embeds refuse this
   try { history.replaceState(null, '', `#${cur + 1}`); } catch (e) {}
   updateChrome();

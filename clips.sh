@@ -36,3 +36,6 @@ clip Venice_screen_recording_2026-11-06.mov 70 10 "crop=2538:1428:8:0,scale=1280
 # IntelliGym (hockey): a "Drive to the Net" drill from the faceoff, through the scrum, to the goal and its flash, ending
 # before the score banner; the game's 4:3 panel cropped from the padded 16:9 frame
 clip IntelliGym_hockey_training_1080.mp4 3.5 7 "crop=1440:1080:239:0,scale=960:720:flags=lanczos" 23 deck/clips/intelligym.mp4
+# Terra (Hide & Seek for Intel's touchscreen Ultrabook): hands sculpt hills on the laptop's screen, then the cut to
+# full-screen mowing, ending before the interview; from the making-of video
+clip Terra_youtube_nBoVowZNeDM_1080.mp4 101.5 11.2 "scale=1280:720:flags=lanczos" 23 deck/clips/terra.mp4

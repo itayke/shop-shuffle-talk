@@ -18,6 +18,7 @@
   reveal: 'parallel',              // bullets and media come in per click: serial, parallel or false (see Reveal)
   media: ['clips/gastro-vr.mp4'],  // any number of clips or images, side by side
   color: 'green',                  // title color: gold (default), green or blue, like the game's round banners
+  footer: 'Itay Keren',             // a line on the road, at the left; logo: 'img/x.png' puts an image at its right
   layout: 'stack',                 // only to override the automatic choice: stack, side or flank
   notes: 'What to say.',           // shown under the stage, never on it
   secs: 40,                        // planned time, summed per section and for the talk
@@ -64,10 +65,10 @@ A slide without bullets picks one of these by itself, the one that gives the med
 - **Side**: the title and text in a column left of the media. Chosen when that makes the media clearly larger (a portrait clip).
 - **Flank**: a side layout that puts the title left of the media and the text right of it, if the title fits.
 - **No media**: the words are centered in the sky with a larger title (the "Grab your phone" slide).
-- **Title**: `kind: 'title'` makes the talk's cover: the title and text larger still, centered in the sky, with a `byline` in the small pixel face at the road's left and a `logo` image at its right. Nothing drops; the words fade in. It shows no media.
+- **Title**: `kind: 'title'` makes the talk's cover: the title and text larger still, centered in the sky. Nothing drops; the words fade in. It shows no media.
 
 ```js
-{ kind: 'title', title: 'Play Means Business', text: 'Games that do a job', byline: 'Itay Keren · itay@untame.com', logo: 'img/untame-logo.png' }
+{ kind: 'title', title: 'Play Means Business', text: 'Games that do a job', footer: 'Itay Keren · itay@untame.com', logo: 'img/untame-logo.png' }
 ```
 
 Text that doesn't fit drops to the next smaller type size.

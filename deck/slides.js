@@ -2,29 +2,16 @@
 // Draft content from BRIEF.md's draft structure: the words are placeholders until the story's flavor is set.
 const DECK = {
   slides: [
-    // ---- Opening
     {
       kind: 'title',
       section: 'Opening',
       title: 'Shop Shuffle',
       text: 'Play Means Business',
-      byline: 'Itay Keren · itay@untame.com',
+      footer: 'Itay Keren · itay@untame.com',
       logo: 'img/untame-logo-cream.png',
-      notes: 'Up while people sit down. The name is a working title.',
       secs: 10,
     },
 
-    // Out of the flow for now (not a pitch for clients); kept for questions
-    // {
-    //   section: 'Why games',
-    //   title: 'Christmas Lights',
-    //   text: 'A game on my front porch',
-    //   media: [{ todo: 'Christmas Lights shmup on the 64×8 LED strip, played by passers-by' }],
-    //   notes: 'Open on the clip, not on a statement. The one claim is still to write.',
-    //   secs: 45,
-    // },
-
-    // ---- Who I am: the person, then two quick threads
     {
       section: 'Who I am',
       title: 'Itay Keren',
@@ -34,7 +21,9 @@ const DECK = {
         'Dozens of launched titles through companies, clients, and solo indie studio Untame',
       ],
       sideWidth: 'wide',
-      media: ['img/itay-portrait.jpg'],
+      media: ['img/portfolio-grid.jpg'],
+      footer: 'Itay Keren · itay@untame.com',
+      logo: 'img/untame-logo-cream.png',
       notes: 'Who I am, in one breath; the next slides are the proof.',
       secs: 15,
     },
@@ -96,6 +85,13 @@ const DECK = {
 
     {
       section: 'Games with a job',
+      title: 'Games with a job',
+      text: 'Play that does real work',
+      secs: 10,
+    },
+
+
+    {
       title: 'Teach',
       text: 'Games can change behavior without players noticing',
       color: 'green',
@@ -110,16 +106,28 @@ const DECK = {
       secs: 40,
     },
     {
+      title: 'Promote',
+      text: 'Games make the product the hero',
+      sideBullets: [
+        '**Terra.** For Intel\'s touchscreen laptop launch',
+        'Touch to sculpt an island, then mow it from the keyboard',
+        'Both sides of a 2-in-1 laptop, demoed hands-on',
+      ],
+      media: [{ src: 'clips/terra.mp4', caption: 'Terra · Intel (Hide & Seek)' }],
+      notes: 'Branding, planted here and paid off at the end: Intel had a product to show off. You have a business.',
+      secs: 30,
+    },
+    {
       title: 'Train',
       text: 'Games make high-stakes practice safe',
       sideBullets: [
         'Virtual Reality GI Experience',
         'Train physicians by modeling high-risk Gastrointestinal conditions',
-        '2 weeks of solo work for a healthcare conference booth',
+        'Drew crowds to Level Ex\'s booth at medical conferences',
         'Acquired for $2M by a major pharma company'],
       // sideWidth: 'narrow',
       media: [{ src: 'clips/gastro-vr.mp4', caption: 'Gastro VR · LEVEL EX' }],
-      notes: 'train the doctor. Level Ex used it to reach customers at expos. The $2M is for the investors in the room.',
+      notes: 'Train the doctor, and draw the crowd: Level Ex used it to reach customers at expos. Two weeks of solo work. The $2M is for the investors in the room.',
       secs: 40,
     },
     {
@@ -150,6 +158,33 @@ const DECK = {
       secs: 40,
     },
     {
+      title: 'Connect',
+      text: 'Games bring people together in real places',
+      sideBullets: [
+        '**The Forge.** A large outdoor team game, in development',
+        'Factions claim real territory by tapping hidden tags with their phones',
+        'Built for hundreds of players across 100+ acres',
+      ],
+      media: [{ src: 'img/forge-console.png', caption: 'The Forge' }],
+      notes: 'A game can move people through a real place: a park, a street, your shop. For questions: iOS and Android apps and a GM console, with GPS, NFC and BLE.',
+      secs: 40,
+    },
+    // Out of the flow for now: Connect carries the real-places point; kept for questions
+    // {
+    //   title: 'Place',
+    //   text: 'Games tied to a real place',
+    //   color: 'blue',
+    //   media: [
+    //     { todo: 'Chinatown AR exhibit, Museum of Santa Cruz', caption: 'Chinatown' },
+    //     { todo: 'Formation Ventures', caption: 'Formation Ventures' },
+    //   ],
+    //   notes: 'Place and community.',
+    //   secs: 40,
+    // },
+
+    // ---- What's next: what I am building now, then the asks to the room
+    {
+      section: "What's next",
       title: 'Spiropod',
       text: 'Mental Wellness & Entertainment',
       sideBullets: ['A handheld game console operated by breath',
@@ -157,24 +192,10 @@ const DECK = {
         'Guidance, Motivation, Distraction',
         'Patent pending, working on scaling and securing capital'],
       media: ['img/spiropod.jpg'],
-      notes: 'Health, part two. Patented, and known to this audience.',
+      notes: 'What I am building now: a game for health, my own venture. Known to this audience.',
       secs: 60,
     },
     {
-      title: 'Place',
-      text: 'Games tied to a real place',
-      color: 'blue',
-      media: [
-        { todo: 'Chinatown AR exhibit, Museum of Santa Cruz', caption: 'Chinatown' },
-        { todo: 'Formation Ventures', caption: 'Formation Ventures' },
-      ],
-      notes: 'Place and community.',
-      secs: 40,
-    },
-
-    // ---- What's next: current work, then the asks to the room
-    {
-      section: "What's next",
       title: 'Work in progress',
       reveal: 'parallel',
       topBullets: ['**Cue Quest.** mini-golf + billiard love child',
