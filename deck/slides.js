@@ -203,7 +203,7 @@ const DECK = {
         '**Backers.** Funding for spiropod and original titles',
         '**Troy & the Capital Region.** Make this place a hub for community and outdoor games',
       ],
-      media: [{ src: 'clips/porch-lights.mp4', caption: "Playable X-MAS light show" }],
+      media: [{ src: 'clips/porch-lights.mp4', caption: "Playable Christmas light show" }],
       notes: 'Troy last: it leads into the game. I already light up my porch for the street. Imagine that on every block.',
       // footer: 'Itay Keren · itay@untame.com',
       // logo: 'img/untame-logo-cream.png',
