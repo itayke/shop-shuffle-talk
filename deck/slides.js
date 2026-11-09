@@ -17,7 +17,8 @@ const DECK = {
       text: 'Award-winning designer & engineer',
       bullets: [
         'Owner and Creative Lead of **Untame**, an independent studio in Valatie, NY',
-        'Dozens of titles shipped with companies, clients and Untame',
+        'Dozens of client projects and original titles shipped in 15+ years',
+        'Built alongside artists worldwide, plus **AI-native** engineering',
       ],
       bulletWidth: 'wide',
       media: ['img/portfolio-grid.jpg'],
@@ -44,10 +45,10 @@ const DECK = {
       text: 'Casual games service & studio',
       bullets: [
         'Multiplayer white-label service',
-        'Ran a games studio of a dozen devs and artists',
+        'Managed a games studio with a dozen devs and artists',
         '30+ multiplayer casual games',
       ],
-      bulletWidth: 'wide',
+      // bulletWidth: 'wide',
       media: [{ src: 'img/oberon-pool.png', caption: '8-Ball Pool' }],
       secs: 20,
     },
