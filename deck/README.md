@@ -6,6 +6,10 @@
 
 The deck needs no network: its fonts (Jersey 15, Press Start 2P, Work Sans) are in `fonts/` with their OFL licenses, and every image and clip is local.
 
+## Online
+
+A backup copy is live at https://shopshuffle-talk.untame.com, for a show day when this computer can't present it. `../deploy.sh` publishes it: it copies this folder to `../build/deck` without this README, drops every slide's `notes` (the URL is public), and deploys it with wrangler as a static Cloudflare Worker (`../wrangler.jsonc`). It needs a one-time `npx wrangler login` with the Cloudflare account that holds untame.com. Rerun it after every edit so the backup stays current; `../deploy.sh --dry-run` builds without deploying.
+
 ## A slide
 
 ```js

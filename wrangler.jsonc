@@ -1,0 +1,7 @@
+{
+  // The deck online, as static files on Cloudflare. deploy.sh builds build/deck and deploys it
+  "name": "shopshuffle-talk",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./build/deck" },
+  "routes": [{ "pattern": "shopshuffle-talk.untame.com", "custom_domain": true }]
+}

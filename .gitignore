@@ -13,3 +13,7 @@ raw/
 _preview.html
 
 .DS_Store
+
+# deploy.sh output and wrangler state
+build/
+.wrangler/

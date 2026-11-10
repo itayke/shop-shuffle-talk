@@ -17,6 +17,7 @@ A 10-minute talk by Itay Keren (Untame) that ends on Shop Shuffle, played live b
 - `sketches/`: one folder per slide sketch, each published as its own artifact. `clip-slide/` (https://claude.ai/artifact/YUZB3fZS5Nxmy4mVnBCQT9) is the chosen clip slide: the clip drops onto the street with the game's squash, in a card like the lobby's QR frame, under a gold title banner and a tagline-style line of text.
 - `deck/` (https://claude.ai/artifact/HtF2qM24fqq1zh31T1Ws7M): the deck page and its trimmed, compressed clips. This is also the **offline backup**: it must play from disk with no network. The flow (each slide's title, text, bullets, media and notes) lives in `deck/slides.js` and the deck lays out each slide itself; `deck/README.md` lists the fields.
 - `clips.sh`: rebuilds every trimmed clip from `raw/`, one line per clip. It is the record of each cut.
+- `deploy.sh` and `wrangler.jsonc`: publish the deck, minus presenter notes, to https://shopshuffle-talk.untame.com, the online backup (see `deck/README.md`).
 - **Git**: https://github.com/itayke/shop-shuffle-talk. Video stays out of it: `.gitignore` drops `raw/` and every video file anywhere, so trimmed clips come back by running `clips.sh` and are published with each artifact. Keep `deck/` complete on disk for show day anyway.
 - **Artifacts were first published from `~/Documents/shop-shuffle-talk`.** To update one from this folder, pass its URL (the links above); publishing without it makes a new artifact.
 
@@ -32,7 +33,7 @@ A 10-minute talk by Itay Keren (Untame) that ends on Shop Shuffle, played live b
 
 - The game is a separate browser tab: the screen app on the big display, phones join by room code. Switching tabs is the one transition; rehearse it.
 - **Clicker clash**: in the game, B toggles the shop list and Space pauses. Put the clicker down once the game starts, or use Space on purpose.
-- **Fallbacks**: F in the game hands the phones' shops to bots (no network). The deck's offline copy is `deck/`. Know what to say if only a few people join.
+- **Fallbacks**: F in the game hands the phones' shops to bots (no network). The deck's offline copy is `deck/`, also on a USB stick; its online copy is https://shopshuffle-talk.untame.com (no notes). On another computer, the game's screen (https://shopshuffle.untame.com/screen) asks for the presenter's password once. Know what to say if only a few people join.
 
 ## Material
 
@@ -86,8 +87,6 @@ Trims wait for the talk's structure. YouTube downloads are the best stream avail
 - Which clips exist. Gather them into `raw/` first; what footage there is will shape the outline.
 - The beat-by-beat outline with timings, and which (if any) slide is playable.
 - What someone should do the next day (the audience is decided; see Draft structure).
-- Fonts for the offline copy: the deck loads its three faces from Google Fonts, so with no network the titles fall back to Arial Black. `deck/` needs local copies.
-
 ## Game repo
 
 `/Users/itaykeren/Code/GitHub/walking-shops`. See its README for running it and its keys, and `docs/GAME_DESIGN.md` for the rules.
