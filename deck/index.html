@@ -207,6 +207,11 @@ const BULLET_IN_MS = 300, BULLET_STAGGER_MS = 120, BULLET_RISE = 10;
 // A card's caption comes in as the card lands, fading in as it rises from this many stage pixels lower
 const CAPTION_IN_MS = 300, CAPTION_SINK = 10;
 const REVEAL_SFX = 'step';
+// Media's fall whistle plays only its last stretch before the first card lands, swelling in rather than starting loud
+const DROP_SFX = 'drop', DROP_TAIL_S = 0.25, DROP_FADE_S = 0.1;
+// Short sounds when moving between slides: forward, the softer second click of a shutter row (it starts this many
+// seconds into the sound); back, a shop sitting down
+const NEXT_SFX = 'shutRow', NEXT_FROM_S = 0.04, BACK_SFX = 'sit';
 // Stamps (award laurels) slam onto a card's top-right corner once it settles. Each is a
 // share of the card's width, capped, with an inset from the media's edges; it starts this many times larger and tilted,
 // overshoots below full size at the impact point (a share of its time), then settles
@@ -214,7 +219,8 @@ const STAMP_SHARE = 0.15, STAMP_MAX_W = 150, STAMP_INSET = 20, STAMP_GAP = 16;
 const STAMP_MS = 260, STAMP_FROM = 2.5, STAMP_TILT = -10, STAMP_HIT = 0.6, STAMP_UNDER = 0.92;
 const STAMP_DELAY_MS = 250, STAMP_STAGGER_MS = 200;
 const STAMP_SHADOW = 'drop-shadow(0 2px 8px rgba(0,0,0,0.75))';
-const STAMP_SFX = 'shutDown';
+// Each stamp lands with the game's walk-in pay: a customer's coin ringing up
+const STAMP_SFX = 'coin';
 // How long to wait for a media file's size or the title font before going on without it
 const PROBE_TIMEOUT_MS = 4000, FONT_WAIT_MS = 2500;
 
@@ -238,7 +244,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let slides = [];
 let cur = 0, revealed = 0, parts = null, playGen = 0, ready = false, timers = [];
 
-const sfx = (id) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id); } catch (e) {} };
+const sfx = (id, opts) => { if (!soundBox.checked || !window.ShopSfx) return; try { ShopSfx.play(id, opts); } catch (e) {} };
 const unlock = () => { try { window.ShopSfx && ShopSfx.unlock(); } catch (e) {} };
 addEventListener('pointerdown', unlock, { once: true });
 addEventListener('keydown', unlock, { once: true });
@@ -817,7 +823,7 @@ function settleIn(node, delay, dy, ms) {
   );
 }
 const bulletIn = (row, delay) => settleIn(row, delay, -BULLET_RISE, BULLET_IN_MS);
-// A stamp slams down from large and tilted, overshooting a little before it settles, with a thud on impact
+// A stamp slams down from large and tilted, overshooting a little before it settles, with a coin's ring on impact
 function stampIn(img, delay) {
   timers.push(setTimeout(() => sfx(STAMP_SFX), delay + STAMP_MS * STAMP_HIT));
   img.animate(
@@ -840,7 +846,8 @@ function play(step, fades) {
   cards.forEach((c, i) => c.cap && settleIn(c.cap, DROP_MS + i * STAGGER_MS, CAPTION_SINK, CAPTION_IN_MS));
   rows.forEach((r, i) => bulletIn(r, lastLand + i * BULLET_STAGGER_MS));
   cards.flatMap((c) => c.stamps).forEach((img, i) => stampIn(img, lastLand + SQUASH_MS + STAMP_DELAY_MS + i * STAMP_STAGGER_MS));
-  if (n) sfx('drop'); else if (rows.length && !fades.length) sfx(REVEAL_SFX);
+  const skip = DROP_MS / 1000 - DROP_TAIL_S;
+  if (n) timers.push(setTimeout(() => sfx(DROP_SFX, { from: skip, fadeIn: DROP_FADE_S }), skip * 1000)); else if (rows.length && !fades.length) sfx(REVEAL_SFX);
   if (!n && !fades.length) return;
   const end = lastLand + Math.max(n ? SQUASH_MS : 0, fades.length ? TEXT_FADE_MS : 0);
   const landed = new Set();
@@ -915,10 +922,10 @@ function next() {
     if (!reduced.matches) play(step, []); else if (step.rows.length) sfx(REVEAL_SFX);
     return;
   }
-  if (cur < slides.length - 1) show(cur + 1, { animate: true });
+  if (cur < slides.length - 1) { sfx(NEXT_SFX, { from: NEXT_FROM_S }); show(cur + 1, { animate: true }); }
 }
 function back() {
-  if (ready && cur > 0) show(cur - 1, { shown: Infinity });
+  if (ready && cur > 0) { sfx(BACK_SFX); show(cur - 1, { shown: Infinity }); }
 }
 
 // ---- Chrome: counter, notes, flow ----------------------------------------------

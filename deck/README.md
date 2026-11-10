@@ -53,7 +53,7 @@ media: [
 ]
 ```
 
-`stamps` are images (award laurels, say) that slam onto the top-right corner of a card's media once every card has landed, one after another with a thud. Several stand in a row, shrinking to fit a narrow card. On a `reveal` slide they land with their card's step.
+`stamps` are images (award laurels, say) that slam onto the top-right corner of a card's media once every card has landed, one after another, each ringing up like a paying customer in the game. Several stand in a row, shrinking to fit a narrow card. On a `reveal` slide they land with their card's step.
 
 `aspect` (`'16:9'`, `'9:16'` or a number) sets a card's shape. A file's own shape is used when it has none; a `todo` defaults to 16:9. A file that doesn't load shows as a MISSING FILE card. Videos play muted and looping. Cut them with `../clips.sh` into `clips/`.
 
@@ -78,3 +78,5 @@ Text that doesn't fit drops to the next smaller type size.
 ## Keys
 
 Right or Page Down: next step or slide. Left or Page Up: previous slide. Home and End: first and last slide. R: replay the drop. F: full screen. B and `.` (clickers' black-screen keys) do nothing. Clicking the stage also steps forward, and the flow list jumps to any slide. The URL keeps the slide number (`index.html#4`).
+
+Sounds are the game's own: a shutter click going forward, a shop sitting going back, the fall whistle and landing for media, a coin for each stamp. The Sound box under the stage mutes them.

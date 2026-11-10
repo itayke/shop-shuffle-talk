@@ -305,7 +305,7 @@ var ShopSfx = (() => {
           stepped(osc.frequency, o.f, o.f2 ?? o.f, t, o.d);
           src = osc;
         }
-        envelope(gain.gain, o.v, t, o.d, o.decay ?? false);
+        envelope(gain.gain, o.v, t, o.d, o.decay ?? false, o.attack ?? ATTACK);
         src.connect(gain);
         gain.connect(panner);
         src.start(t);
@@ -349,21 +349,35 @@ var ShopSfx = (() => {
     const n = Math.max(1, Math.round(d / FRAME));
     for (let i = 1; i < n; i++) param.setValueAtTime(a * Math.pow(b / a, i / n), t + i * FRAME);
   }
-  function envelope(g, v, t, d, decay) {
+  function envelope(g, v, t, d, decay, attack = ATTACK) {
     g.setValueAtTime(0, t);
-    g.linearRampToValueAtTime(v, t + ATTACK);
+    g.linearRampToValueAtTime(v, t + attack);
     if (decay) {
       const n = Math.max(1, Math.round(d / FRAME));
       for (let i = 1; i < n; i++) g.setValueAtTime(v * (1 - i / n), t + i * FRAME);
-    } else g.setValueAtTime(v, Math.max(t + ATTACK, t + d - RELEASE));
+    } else g.setValueAtTime(v, Math.max(t + attack, t + d - RELEASE));
     g.linearRampToValueAtTime(0, t + d);
   }
 
   // ../../../../../private/tmp/claude-502/-Users-itaykeren-Code-GitHub-walking-shops/6403fcd0-7fd6-44eb-a2a4-56977f88912f/scratchpad/style/sfx-entry.ts
   var synth = new Synth();
+  // Deck addition, not in the game: opts.from (seconds) starts the sound that far in, its glides picking up where they
+  // would be, and opts.fadeIn (seconds) swells each tone in rather than starting it at full volume
   function play(id, opts = {}, pan = 0) {
     synth.unlock();
-    synth.play(soundTones(id, opts), pan);
+    const tones = soundTones(id, opts)
+      .map((t) => opts.from ? skipTo(t, opts.from) : t)
+      .filter(Boolean)
+      .map((t) => opts.fadeIn ? { ...t, attack: Math.min(opts.fadeIn, t.d - RELEASE) } : t);
+    synth.play(tones, pan);
+  }
+  // A tone as heard from `from` seconds into its sound: gone if it already ended, shortened mid-glide if it was playing
+  function skipTo(t, from) {
+    const at = t.at ?? 0;
+    if (at + t.d <= from) return null;
+    if (at >= from) return { ...t, at: at - from };
+    const cut = from - at, f2 = t.f2 ?? t.f;
+    return { ...t, at: 0, d: t.d - cut, f: t.f * Math.pow(f2 / t.f, cut / t.d) };
   }
   var unlock = () => synth.unlock();
   var ids = ["step", "sit", "strain", "topple", "land", "bump", "pushback", "coin", "paraCoin", "lost", "drop", "shutRow", "shutDown", "shutUp", "bar", "ready", "walkIns", "parachutes", "tick", "winner"];
