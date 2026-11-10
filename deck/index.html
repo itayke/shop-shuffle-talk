@@ -43,6 +43,8 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 
 header { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; }
 .eyebrow, .keys, .counter { font: 400 10px/1.6 var(--font-pixel); letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; margin: 0; }
 .keys { font-size: 8px; }
+.home { color: inherit; text-decoration: none; }
+.home:hover { color: var(--accent); }
 
 /* The stage: a fixed 1920×1080 slide, scaled to fit its frame */
 .frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: var(--frame-bg); border-radius: 4px; overflow: hidden; cursor: pointer; }
@@ -81,7 +83,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--chute); out
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Shop Shuffle talk · deck</p>
+    <p class="eyebrow"><a class="home" id="home">Shop Shuffle talk · deck</a></p>
     <p class="keys">Right / PgDn next · Left / PgUp back · R replay · F full screen · B and . ignored</p>
   </header>
 
@@ -987,6 +989,8 @@ const toggleFull = () => {
   if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
   else frame.requestFullscreen?.().catch(() => {});
 };
+// The heading reloads the deck from the start: the page's own address, minus the slide number
+$('home').href = location.href.split('#')[0];
 $('prev').addEventListener('click', back);
 $('next').addEventListener('click', next);
 $('full').addEventListener('click', toggleFull);

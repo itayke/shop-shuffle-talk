@@ -83,4 +83,8 @@ Text that doesn't fit drops to the next smaller type size.
 
 Right or Page Down: next step or slide. Left or Page Up: previous slide. Home and End: first and last slide. R: replay the drop. F: full screen. B and `.` (clickers' black-screen keys) do nothing. Clicking the stage also steps forward, and the flow list jumps to any slide. The URL keeps the slide number (`index.html#4`).
 
+A clicker is a keyboard to the computer: its next and back buttons send Page Down and Page Up. A slideshow button sends F5 (ignored by Chrome on a Mac) and then Esc, which leaves full screen; F goes back in. Keys reach only the window in front, so after clicking anywhere else, click the stage once (it steps forward) to drive the deck again.
+
+With mirrored displays the room sees the notes until F. With extended displays, move the window to the projector and press F there; the notes then show nowhere, since the deck has no separate presenter view.
+
 Sounds are the game's own: a shutter click going forward, a shop sitting going back, the fall whistle and landing for media, a coin for each stamp. The Sound box under the stage mutes them.

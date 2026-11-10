@@ -33,6 +33,7 @@ A 10-minute talk by Itay Keren (Untame) that ends on Shop Shuffle, played live b
 
 - The game is a separate browser tab: the screen app on the big display, phones join by room code. Switching tabs is the one transition; rehearse it.
 - **Clicker clash**: in the game, B toggles the shop list and Space pauses. Put the clicker down once the game starts, or use Space on purpose.
+- **F is for the deck only.** In the deck it's full screen; in the game it hands every phone's shop to bots. Switching to the game's tab leaves the deck's full screen.
 - **Fallbacks**: F in the game hands the phones' shops to bots (no network). The deck's offline copy is `deck/`, also on a USB stick; its online copy is https://shopshuffle-talk.untame.com (no notes). On another computer, the game's screen (https://shopshuffle.untame.com/screen) asks for the presenter's password once. Know what to say if only a few people join.
 
 ## Material
